@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+                       xmlns:s="library://ns.adobe.com/flex/spark"
+                       xmlns:andrewgura="com.andrewgura.*"
+                       preinitialize="onPreinitialize(event)">
+
+    <fx:Script><![CDATA[
+        import com.andrewgura.models.WorkshopConfig;
+        import com.andrewgura.ui.components.TCAEditor;
+        import com.andrewgura.vo.TCAProjectVO;
+
+        [Bindable]
+        public var config:WorkshopConfig;
+
+        private function onPreinitialize(event:Event):void {
+            config = new WorkshopConfig();
+            config.editorClass = TCAEditor;
+            config.projectClass = TCAProjectVO;
+            config.projectFileExtension = 'tcp';
+            config.projectFileTypeDescription = 'TCAWorkshop project file';
+        }
+        ]]>
+    </fx:Script>
+
+    <andrewgura:Workshop width="100%" height="100%"
+                         config="{config}"/>
+
+</s:WindowedApplication>

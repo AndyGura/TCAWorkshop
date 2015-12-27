@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="TCAWorkshop">
+    <configurations>
+      <configuration name="TCAWorkshop" target-platform="Desktop" main-class="Main" output-file="TCAWorkshop.swf" output-folder="$MODULE_DIR$/out/production/TCAWorkshop">
+        <dependencies target-player="11.9">
+          <entries>
+            <entry module-name="BreezeTheme" build-configuration-name="BreezeTheme">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="WorkshopAPI" build-configuration-name="WorkshopAPI">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="Flex_4.12.0.air-3.9" />
+        </dependencies>
+        <compiler-options>
+          <map>
+            <entry key="compiler.theme" value="$MODULE_DIR$/../BreezeTheme/bin/BreezeTheme.swc" />
+          </map>
+        </compiler-options>
+        <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Main-app.xml" package-file-name="TCAWorkshop" />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="Flex_4.12.0.air-3.9" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="BreezeTheme" exported="" />
+    <orderEntry type="module" module-name="WorkshopAPI" exported="" />
+  </component>
+</module>

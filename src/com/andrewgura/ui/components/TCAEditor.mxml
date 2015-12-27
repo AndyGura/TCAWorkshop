@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<components:Editor xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:components="com.andrewgura.ui.components.*"
+                   addedToStage="onAddedToStage(event)">
+
+    <fx:Script><![CDATA[
+        import com.andrewgura.consts.AssetsConsts;
+        import com.andrewgura.controllers.MainController;
+        import com.andrewgura.controllers.TCAController;
+        import com.andrewgura.vo.ProjectVO;
+        import com.andrewgura.vo.TCAProjectVO;
+        import com.andrewgura.vo.TextureVO;
+
+        private var controller:TCAController;
+
+        override public function set project(value:ProjectVO):void {
+            super.project = value;
+            controller = new TCAController(TCAProjectVO(project));
+        }
+
+        private function onAddedToStage(event:Event):void {
+            this.addEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, dragEnterHandler);
+            this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler);
+        }
+
+        protected function saveClickHandler(event:MouseEvent):void {
+            MainController.saveCurrentProject();
+        }
+
+        protected function loadClickHandler(event:MouseEvent):void {
+            MainController.openFile();
+        }
+
+        protected function deleteItemClickHandler(event:MouseEvent):void {
+            controller.deleteItem(list.selectedIndex);
+        }
+
+        protected function dragDropHandler(event:NativeDragEvent):void {
+            var dropFiles:Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+            controller.addTexturesFromImageFiles(dropFiles);
+        }
+
+        protected function dragEnterHandler(event:NativeDragEvent):void {
+            NativeDragManager.acceptDragDrop(this);
+        }
+        ]]>
+    </fx:Script>
+
+    <s:VGroup width="100%" height="100%"
+              visible="{project}">
+
+        <s:HGroup width="100%" height="100%">
+            <s:VGroup height="100%">
+                <s:List id="list" dataProvider="{TCAProjectVO(project).imageCollection}"
+                        itemRenderer="com.andrewgura.ui.itemRenderers.TextureListItemRenderer"
+                        width="400" height="100%"/>
+                <s:HGroup width="100%" paddingTop="5" paddingBottom="5" paddingLeft="5" paddingRight="5">
+                    <s:Button label="Delete" click="deleteItemClickHandler(event)"/>
+                </s:HGroup>
+            </s:VGroup>
+            <s:Group width="100%" height="100%">
+                <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"/>
+                <s:Image id="image" source="{TextureVO(list.selectedItem).bitmap}" width="100%" height="100%"/>
+                <s:Rect width="100%" height="100%">
+                    <s:stroke>
+                        <s:SolidColorStroke color="{getStyle('borderColor')}"/>
+                    </s:stroke>
+                </s:Rect>
+            </s:Group>
+        </s:HGroup>
+
+    </s:VGroup>
+
+    <s:Label text="Welcome to TCAWorkshop.{'\n'}Create new project or open an existing one"
+             horizontalCenter="0" verticalCenter="0"
+             lineBreak="explicit" textAlign="center"
+             visible="{!project}"/>
+
+</components:Editor>
