@@ -7,6 +7,7 @@
     <fx:Script><![CDATA[
         import com.andrewgura.models.WorkshopConfig;
         import com.andrewgura.ui.components.TCAEditor;
+        import com.andrewgura.vo.FileTypeVO;
         import com.andrewgura.vo.TCAProjectVO;
 
         [Bindable]
@@ -16,8 +17,7 @@
             config = new WorkshopConfig();
             config.editorClass = TCAEditor;
             config.projectClass = TCAProjectVO;
-            config.projectFileExtension = 'tcp';
-            config.projectFileTypeDescription = 'TCAWorkshop project file';
+            config.projectFileType = new FileTypeVO('tcp', 'TCAWorkshop project file');
         }
         ]]>
     </fx:Script>
