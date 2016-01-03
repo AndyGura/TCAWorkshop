@@ -24,12 +24,8 @@
             this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler);
         }
 
-        protected function saveClickHandler(event:MouseEvent):void {
-            MainController.saveCurrentProject();
-        }
-
-        protected function loadClickHandler(event:MouseEvent):void {
-            MainController.openFile();
+        protected function addItemClickHandler(event:MouseEvent):void {
+            MainController.importFiles();
         }
 
         protected function deleteItemClickHandler(event:MouseEvent):void {
@@ -38,7 +34,7 @@
 
         protected function dragDropHandler(event:NativeDragEvent):void {
             var dropFiles:Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
-            controller.addTexturesFromImageFiles(dropFiles);
+            MainController.importSelectedFiles(dropFiles);
         }
 
         protected function dragEnterHandler(event:NativeDragEvent):void {
@@ -56,6 +52,7 @@
                         itemRenderer="com.andrewgura.ui.itemRenderers.TextureListItemRenderer"
                         width="400" height="100%"/>
                 <s:HGroup width="100%" paddingTop="5" paddingBottom="5" paddingLeft="5" paddingRight="5">
+                    <s:Button label="Add" click="addItemClickHandler(event)"/>
                     <s:Button label="Delete" click="deleteItemClickHandler(event)"/>
                 </s:HGroup>
             </s:VGroup>
