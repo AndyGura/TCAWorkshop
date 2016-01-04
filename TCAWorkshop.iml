@@ -11,6 +11,9 @@
             <entry module-name="WorkshopAPI" build-configuration-name="WorkshopAPI">
               <dependency linkage="Merged" />
             </entry>
+            <entry module-name="NFSNativeResourceLoader" build-configuration-name="NFSNativeResourceLoader">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="4.14.1.air-20.0" />
         </dependencies>
@@ -39,5 +42,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="BreezeTheme" exported="" />
     <orderEntry type="module" module-name="WorkshopAPI" exported="" />
+    <orderEntry type="module" module-name="NFSNativeResourceLoader" exported="" />
   </component>
 </module>

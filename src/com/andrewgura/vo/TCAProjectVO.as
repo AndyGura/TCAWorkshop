@@ -1,7 +1,11 @@
 package com.andrewgura.vo {
 
+import com.andrewgura.nfs12NativeFileFormats.NFSNativeResourceLoader;
+import com.andrewgura.nfs12NativeFileFormats.textures.bitmaps.INativeBitmap;
 import com.andrewgura.utils.TextureLoader;
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.filesystem.File;
 import flash.utils.ByteArray;
 
@@ -33,10 +37,27 @@ public class TCAProjectVO extends ProjectVO {
     }
 
     override public function importFiles(files:Array):void {
+        var textureWrap:TextureLoader;
+        var texture:TextureVO;
         for each (var file:File in files) {
-            var texture:TextureVO = new TextureVO(file.name.substr(0, file.name.length - 4));
-            imageCollection.addItem(texture);
-            var textureWrap:TextureLoader = new TextureLoader(texture, file.nativePath);
+            switch (file.extension.toLowerCase()) {
+                case 'png':
+                case 'jpg':
+                    texture = new TextureVO(file.name.substr(0, file.name.length - 4));
+                    imageCollection.addItem(texture);
+                    textureWrap = new TextureLoader(texture, file.nativePath);
+                    break;
+                case 'fsh':
+                case 'qfs':
+                    var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadTextureFile(file);
+                    for each (var nfsTexture:INativeBitmap in nfsTextures) {
+                        texture = new TextureVO(nfsTexture.name);
+                        imageCollection.addItem(texture);
+                        textureWrap = new TextureLoader(texture);
+                        textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
+                    }
+                    break;
+            }
         }
     }
 }

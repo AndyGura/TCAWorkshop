@@ -19,7 +19,8 @@
             config.projectClass = TCAProjectVO;
             config.projectFileType = new FileTypeVO('TCAWorkshop project file', 'tcp');
             config.importTypes = [
-                new FileTypeVO('Images', 'png', 'jpg')
+                new FileTypeVO('Images', 'png', 'jpg'),
+                new FileTypeVO('NFS1 texture packs', 'fsh', 'qfs')
             ];
         }
         ]]>

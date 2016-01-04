@@ -28,16 +28,26 @@ public class TextureLoader extends EventDispatcher {
 
     public static const GENERATION_DONE_EVENT:String = "GENERATION_DONE_EVENT";
 
-    public function TextureLoader(texture:TextureVO, nativePath:String) {
-        texture.processingProgress = 10;
+    private var nativePath:String;
+    private var texture:TextureVO;
+    private var tempDirectory:File;
+
+    public function TextureLoader(texture:TextureVO, nativePath:String = null) {
         this.texture = texture;
+        this.nativePath = nativePath;
+        if (!nativePath) {
+            return;
+        } else {
+            loadByFilePath();
+        }
+    }
+
+    private function loadByFilePath():void {
+        texture.processingProgress = 10;
         var loader:Loader = new Loader();
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
         loader.load(new URLRequest(nativePath));
     }
-
-    private var texture:TextureVO;
-    private var tempDirectory:File;
 
     private function encodePNG():void {
         var pngData:ByteArray = (new PNGEncoder()).encode(texture.bitmap.bitmapData);
@@ -87,12 +97,17 @@ public class TextureLoader extends EventDispatcher {
         return i;
     }
 
-    private function onLoadComplete(event:Event):void {
+    public function loadByBitmap(bitmap:Bitmap):void {
         texture.processingProgress = 30;
-        texture.sourceBitmap = Bitmap(LoaderInfo(event.target).content);
+        texture.sourceBitmap = bitmap;
         texture.bitmap = getResized(texture.sourceBitmap);
         tempDirectory = File.createTempDirectory();
         encodePNG();
+
+    }
+
+    private function onLoadComplete(event:Event):void {
+        loadByBitmap(Bitmap(LoaderInfo(event.target).content));
     }
 
     private function onInputHandler(event:Event):void {

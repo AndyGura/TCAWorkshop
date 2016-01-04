@@ -41,7 +41,7 @@ public class TextureVO {
         var bytes:ByteArray = sourceBitmap.bitmapData.getPixels(rect);
         output.writeObject({rect: rect, data: bytes});
         rect = new Rectangle(0, 0, bitmap.width, bitmap.height);
-        var bytes:ByteArray = bitmap.bitmapData.getPixels(rect);
+        bytes = bitmap.bitmapData.getPixels(rect);
         output.writeObject({rect: rect, data: bytes});
         return output;
     }
