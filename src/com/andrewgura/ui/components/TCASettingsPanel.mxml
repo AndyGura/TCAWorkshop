@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<components:SettingsPanel xmlns:fx="http://ns.adobe.com/mxml/2009"
+                          xmlns:s="library://ns.adobe.com/flex/spark"
+                          xmlns:components="com.andrewgura.ui.components.*">
+
+    <fx:Script><![CDATA[
+        import com.andrewgura.vo.ProjectVO;
+        import com.andrewgura.vo.TCAProjectVO;
+
+        override public function set project(value:ProjectVO):void {
+            super.project = value;
+            outputTcaPath = TCAProjectVO(value).outputTcaPath;
+        }
+
+        [Bindable]
+        public var outputTcaPath:String;
+
+        override public function getChangesObject():* {
+            return {
+                outputTcaPath: outputTcaPath
+            };
+        }
+        ]]>
+    </fx:Script>
+
+    <s:TileGroup requestedColumnCount="2" verticalAlign="middle">
+        <s:Label text="Output TCA directory:"/>
+        <s:TextInput text="@{outputTcaPath}"/>
+    </s:TileGroup>
+
+</components:SettingsPanel>

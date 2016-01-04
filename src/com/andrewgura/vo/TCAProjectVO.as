@@ -1,23 +1,43 @@
 package com.andrewgura.vo {
 
-import com.andrewgura.nfs12NativeFileFormats.NFSNativeResourceLoader;
-import com.andrewgura.nfs12NativeFileFormats.textures.bitmaps.INativeBitmap;
-import com.andrewgura.utils.TextureLoader;
+import com.andrewgura.controllers.TCAController;
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.filesystem.File;
 import flash.utils.ByteArray;
 
 import mx.collections.ArrayCollection;
+import mx.events.CollectionEvent;
+import mx.events.CollectionEventKind;
+
+import spark.collections.Sort;
+import spark.collections.SortField;
 
 [Bindable]
 public class TCAProjectVO extends ProjectVO {
 
+    public var outputTcaPath:String = '';
+
     public var imageCollection:ArrayCollection = new ArrayCollection();
+
+    public function TCAProjectVO() {
+        super();
+        var sort:Sort = new Sort();
+        sort.fields = [new SortField("name")];
+        imageCollection.sort = sort;
+        imageCollection.refresh();
+        imageCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, onImagesCollectionChange);
+    }
+
+    private function onImagesCollectionChange(event:CollectionEvent):void {
+        if (event.kind == CollectionEventKind.ADD || event.kind == CollectionEventKind.REPLACE || event.kind == CollectionEventKind.MOVE) {
+            imageCollection.refresh();
+        }
+    }
 
     override public function serialize():ByteArray {
         var output:ByteArray = super.serialize();
+        output.writeObject({
+            outputTcaPath: outputTcaPath
+        });
         for each (var texture:TextureVO in imageCollection) {
             output.writeObject(texture.serialize());
         }
@@ -27,8 +47,10 @@ public class TCAProjectVO extends ProjectVO {
 
     override public function deserialize(name:String, fileName:String, data:ByteArray):void {
         super.deserialize(name, fileName, data);
-        imageCollection = new ArrayCollection();
         data.uncompress();
+        var settings:* = data.readObject();
+        this.outputTcaPath = settings.outputTcaPath;
+        imageCollection = new ArrayCollection();
         while (data.bytesAvailable > 0) {
             var texture:TextureVO = new TextureVO('');
             texture.deserialize(data.readObject());
@@ -37,29 +59,18 @@ public class TCAProjectVO extends ProjectVO {
     }
 
     override public function importFiles(files:Array):void {
-        var textureWrap:TextureLoader;
-        var texture:TextureVO;
-        for each (var file:File in files) {
-            switch (file.extension.toLowerCase()) {
-                case 'png':
-                case 'jpg':
-                    texture = new TextureVO(file.name.substr(0, file.name.length - 4));
-                    imageCollection.addItem(texture);
-                    textureWrap = new TextureLoader(texture, file.nativePath);
-                    break;
-                case 'fsh':
-                case 'qfs':
-                    var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadTextureFile(file);
-                    for each (var nfsTexture:INativeBitmap in nfsTextures) {
-                        texture = new TextureVO(nfsTexture.name);
-                        imageCollection.addItem(texture);
-                        textureWrap = new TextureLoader(texture);
-                        textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
-                    }
-                    break;
-            }
-        }
+        (new TCAController(this)).importFiles(files);
     }
+
+    public function getExportedTCA():ByteArray {
+        var output:ByteArray = new ByteArray();
+        for each (var texture:TextureVO in imageCollection) {
+            output.writeObject({name: texture.name, data: texture.atfData});
+        }
+        output.compress();
+        return output;
+    }
+
 }
 
 }
