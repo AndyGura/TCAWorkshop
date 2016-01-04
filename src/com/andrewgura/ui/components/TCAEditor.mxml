@@ -8,6 +8,7 @@
         import com.andrewgura.consts.AssetsConsts;
         import com.andrewgura.controllers.MainController;
         import com.andrewgura.controllers.TCAController;
+        import com.andrewgura.events.DataObjectEvent;
         import com.andrewgura.vo.ProjectVO;
         import com.andrewgura.vo.TCAProjectVO;
         import com.andrewgura.vo.TextureVO;
@@ -25,6 +26,7 @@
         private function onAddedToStage(event:Event):void {
             this.addEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, dragEnterHandler);
             this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler);
+            addEventListener("renameTexture", onRenameTexture);
         }
 
         protected function addItemClickHandler(event:MouseEvent):void {
@@ -61,6 +63,10 @@
             controller.exportPicture(TextureVO(list.selectedItem).name, viewModeTabBar.selectedItem.bitmapField == "sourceBitmap");
         }
 
+        private function onRenameTexture(event:DataObjectEvent):void {
+            var newName:String = controller.getNewNameForDuplicate(event.data.newName, TCAProjectVO(project).imageCollection.getItemIndex(event.data.texture));
+            event.data.texture.name = newName;
+        }
         ]]>
     </fx:Script>
 
@@ -105,7 +111,9 @@
                         </s:stroke>
                     </s:Rect>
                 </s:Group>
-                <s:HGroup width="100%">
+                <s:HGroup width="100%" verticalAlign="middle" visible="{bitmapToView}" includeInLayout="{bitmapToView}">
+                    <s:Label text="Dimensions: {bitmapToView.width}X{bitmapToView.height}"/>
+                    <s:Spacer width="100%"/>
                     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
                 </s:HGroup>
             </s:VGroup>

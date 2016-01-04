@@ -5,8 +5,6 @@ import com.andrewgura.controllers.TCAController;
 import flash.utils.ByteArray;
 
 import mx.collections.ArrayCollection;
-import mx.events.CollectionEvent;
-import mx.events.CollectionEventKind;
 
 import spark.collections.Sort;
 import spark.collections.SortField;
@@ -24,13 +22,6 @@ public class TCAProjectVO extends ProjectVO {
         sort.fields = [new SortField("name")];
         imageCollection.sort = sort;
         imageCollection.refresh();
-        imageCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, onImagesCollectionChange);
-    }
-
-    private function onImagesCollectionChange(event:CollectionEvent):void {
-        if (event.kind == CollectionEventKind.ADD || event.kind == CollectionEventKind.REPLACE || event.kind == CollectionEventKind.MOVE) {
-            imageCollection.refresh();
-        }
     }
 
     override public function serialize():ByteArray {
@@ -50,7 +41,6 @@ public class TCAProjectVO extends ProjectVO {
         data.uncompress();
         var settings:* = data.readObject();
         this.outputTcaPath = settings.outputTcaPath;
-        imageCollection = new ArrayCollection();
         while (data.bytesAvailable > 0) {
             var texture:TextureVO = new TextureVO('');
             texture.deserialize(data.readObject());

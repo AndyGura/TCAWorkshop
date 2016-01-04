@@ -19,6 +19,7 @@ import flash.utils.ByteArray;
 import mx.collections.ArrayCollection;
 
 import mx.events.CollectionEvent;
+import mx.events.CollectionEventKind;
 import mx.graphics.codec.PNGEncoder;
 
 public class TCAController {
@@ -32,6 +33,9 @@ public class TCAController {
 
     public function onImagesChange(event:CollectionEvent):void {
         project.isChangesSaved = false;
+        if (event.kind == CollectionEventKind.ADD || event.kind == CollectionEventKind.MOVE || event.kind == CollectionEventKind.UPDATE || event.kind == CollectionEventKind.REPLACE) {
+            project.imageCollection.refresh();
+        }
     }
 
     public function importFiles(files:Array):void {
@@ -70,9 +74,12 @@ public class TCAController {
             return;
         }
         var pngData:ByteArray = (new PNGEncoder()).encode(isOriginal ? texture.sourceBitmap.bitmapData : texture.bitmap.bitmapData);
-        var f:File = new File();
+        var f:File;
         if (project.outputTcaPath) {
-            f = f.resolvePath(project.outputTcaPath);
+            f = File.applicationDirectory.resolvePath(project.fileName);
+            f = f.parent.resolvePath(project.outputTcaPath);
+        } else {
+            f = new File();
         }
         f.save(pngData, name + '.png');
     }
