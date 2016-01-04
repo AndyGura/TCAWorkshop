@@ -14,6 +14,9 @@
 
         private var controller:TCAController;
 
+        [Bindable]
+        private var bitmapToView:Bitmap;
+
         override public function set project(value:ProjectVO):void {
             super.project = value;
             controller = new TCAController(TCAProjectVO(project));
@@ -40,8 +43,20 @@
         protected function dragEnterHandler(event:NativeDragEvent):void {
             NativeDragManager.acceptDragDrop(this);
         }
+
+        private function updateBitmapToView(...bindings):Object {
+            bitmapToView = TextureVO(list.selectedItem)[viewModeTabBar.selectedItem.bitmapField];
+            return null;
+        }
+
         ]]>
     </fx:Script>
+
+    <fx:Declarations>
+        <fx:Object>
+            {updateBitmapToView(TextureVO(list.selectedItem).bitmap, TextureVO(list.selectedItem).sourceBitmap, viewModeTabBar.selectedItem)}
+        </fx:Object>
+    </fx:Declarations>
 
     <s:VGroup width="100%" height="100%"
               visible="{project}">
@@ -56,15 +71,26 @@
                     <s:Button label="Delete" click="deleteItemClickHandler(event)"/>
                 </s:HGroup>
             </s:VGroup>
-            <s:Group width="100%" height="100%">
-                <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"/>
-                <s:Image id="image" source="{TextureVO(list.selectedItem).bitmap}" width="100%" height="100%"/>
-                <s:Rect width="100%" height="100%">
-                    <s:stroke>
-                        <s:SolidColorStroke color="{getStyle('borderColor')}"/>
-                    </s:stroke>
-                </s:Rect>
-            </s:Group>
+            <s:VGroup width="100%" height="100%" gap="-1">
+                <s:TabBar id="viewModeTabBar"
+                          width="100%" labelField="name">
+                    <s:dataProvider>
+                        <s:ArrayCollection>
+                            <fx:Object name="Source" bitmapField="sourceBitmap"/>
+                            <fx:Object name="ATF" bitmapField="bitmap"/>
+                        </s:ArrayCollection>
+                    </s:dataProvider>
+                </s:TabBar>
+                <s:Group width="100%" height="100%">
+                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"/>
+                    <s:Image source="{bitmapToView}" width="100%" height="100%"/>
+                    <s:Rect width="100%" height="100%">
+                        <s:stroke>
+                            <s:SolidColorStroke color="{getStyle('borderColor')}"/>
+                        </s:stroke>
+                    </s:Rect>
+                </s:Group>
+            </s:VGroup>
         </s:HGroup>
 
     </s:VGroup>

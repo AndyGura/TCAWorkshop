@@ -81,7 +81,7 @@ public class TextureLoader extends EventDispatcher {
     }
 
     private function calculateNewDimension(value:Number):Number {
-        for (var i:Number = 1; i <= 256; i <<= 1) {
+        for (var i:Number = 1; i < 2048; i <<= 1) {
             if (i >= value) break;
         }
         return i;
@@ -89,8 +89,8 @@ public class TextureLoader extends EventDispatcher {
 
     private function onLoadComplete(event:Event):void {
         texture.processingProgress = 30;
-        texture.bitmap = Bitmap(LoaderInfo(event.target).content);
-        texture.bitmap = getResized(texture.bitmap);
+        texture.sourceBitmap = Bitmap(LoaderInfo(event.target).content);
+        texture.bitmap = getResized(texture.sourceBitmap);
         tempDirectory = File.createTempDirectory();
         encodePNG();
     }
