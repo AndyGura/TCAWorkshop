@@ -19,6 +19,7 @@ import flash.utils.ByteArray;
 import mx.collections.ArrayCollection;
 
 import mx.events.CollectionEvent;
+import mx.graphics.codec.PNGEncoder;
 
 public class TCAController {
 
@@ -61,6 +62,19 @@ public class TCAController {
                     break;
             }
         }
+    }
+
+    public function exportPicture(name:String, isOriginal:Boolean):void {
+        var texture:TextureVO = getTextureByName(name);
+        if (!texture) {
+            return;
+        }
+        var pngData:ByteArray = (new PNGEncoder()).encode(isOriginal ? texture.sourceBitmap.bitmapData : texture.bitmap.bitmapData);
+        var f:File = new File();
+        if (project.outputTcaPath) {
+            f = f.resolvePath(project.outputTcaPath);
+        }
+        f.save(pngData, name + '.png');
     }
 
     public function exportTCA():void {

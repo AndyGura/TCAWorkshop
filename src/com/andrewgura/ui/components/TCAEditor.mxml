@@ -53,9 +53,14 @@
             return null;
         }
 
-        private function onExportClick(event:MouseEvent):void {
+        private function onExportTcaClick(event:MouseEvent):void {
             controller.exportTCA();
         }
+
+        private function onExportPngClick(event:MouseEvent):void {
+            controller.exportPicture(TextureVO(list.selectedItem).name, viewModeTabBar.selectedItem.bitmapField == "sourceBitmap");
+        }
+
         ]]>
     </fx:Script>
 
@@ -78,7 +83,7 @@
                     <s:Button label="Add" click="addItemClickHandler(event)"/>
                     <s:Button label="Delete" click="deleteItemClickHandler(event)"/>
                     <s:Spacer width="100%"/>
-                    <s:Button label="EXPORT TCA" click="onExportClick(event)"/>
+                    <s:Button label="EXPORT TCA" click="onExportTcaClick(event)"/>
                 </s:HGroup>
             </s:VGroup>
             <s:VGroup width="100%" height="100%" gap="-1">
@@ -100,6 +105,9 @@
                         </s:stroke>
                     </s:Rect>
                 </s:Group>
+                <s:HGroup width="100%">
+                    <s:Button label="Export PNG" click="onExportPngClick(event)"/>
+                </s:HGroup>
             </s:VGroup>
         </s:HGroup>
 

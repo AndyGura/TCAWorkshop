@@ -56,6 +56,7 @@ public class TCAProjectVO extends ProjectVO {
             texture.deserialize(data.readObject());
             imageCollection.addItem(texture);
         }
+        isChangesSaved = true;
     }
 
     override public function importFiles(files:Array):void {
