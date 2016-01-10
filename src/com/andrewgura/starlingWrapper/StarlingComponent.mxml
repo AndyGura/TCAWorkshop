@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+         xmlns:s="library://ns.adobe.com/flex/spark"
+         addedToStage="addedToStageHandler(event)">
+
+
+    <fx:Script><![CDATA[
+        import mx.core.FlexGlobals;
+        import mx.core.UIComponent;
+        import mx.events.FlexEvent;
+        import mx.events.ResizeEvent;
+
+        import spark.components.Group;
+        import spark.components.supportClasses.GroupBase;
+        import spark.core.MaskType;
+
+        import starling.core.Starling;
+        import starling.display.DisplayObject;
+
+        public static var starlingRoot:StarlingWrapperRoot;
+        private static var starlingMasks:Array = [];
+        public static var starling:Starling = function initStarling():void {
+            var application:flash.display.DisplayObject = flash.display.DisplayObject(FlexGlobals.topLevelApplication);
+            application.addEventListener(Event.ADDED_TO_STAGE, onApplicationAddedToStage);
+        }();
+
+        private static function onApplicationAddedToStage(event:Event):void {
+            var stage:Stage = FlexGlobals.topLevelApplication.stage;
+            stage.addEventListener(ResizeEvent.RESIZE, onStageResized);
+            stage.align = StageAlign.TOP_LEFT;
+            stage.scaleMode = StageScaleMode.NO_SCALE;
+            starling = new Starling(StarlingWrapperRoot, stage);
+            starling.start();
+        }
+
+        private static function onStageResized(e:Event):void {
+            var stage:Stage = FlexGlobals.topLevelApplication.stage;
+            if (stage.stageWidth == 0 || stage.stageHeight == 0) {
+                return;
+            }
+            var stageWidth:Number = Number.max(stage.stageWidth, 32);
+            var stageHeight:Number = Number.max(stage.stageHeight, 32);
+            var viewPortRectangle:Rectangle = new Rectangle();
+            viewPortRectangle.width = stageWidth;
+            viewPortRectangle.height = stageHeight;
+            Starling.current.viewPort = viewPortRectangle;
+            starling.stage.stageWidth = stageWidth;
+            starling.stage.stageHeight = stageHeight;
+        }
+
+        private var application:flash.display.DisplayObject = flash.display.DisplayObject(FlexGlobals.topLevelApplication);
+        private var parentsInfo:Array = [];
+        private var isMaskEnabled:Boolean = false;
+        private var _starlingComponent:starling.display.DisplayObject;
+        private var currentMask:Sprite;
+        private static var maskGroup:Group;
+        private static var fullMask:UIComponent;
+
+        public function get starlingComponent():starling.display.DisplayObject {
+            return _starlingComponent;
+        }
+
+        public function set starlingComponent(value:starling.display.DisplayObject):void {
+            if (_starlingComponent && starlingRoot) {
+                starlingRoot.removeChild(_starlingComponent);
+            }
+            _starlingComponent = value;
+            if (starlingRoot) {
+                starlingRoot.addChild(_starlingComponent);
+            }
+            updateStarlingComponent();
+            if (!isMaskEnabled && isGloballyVisible()) {
+                setMask();
+                isMaskEnabled = true;
+            }
+        }
+
+        private function addedToStageHandler(event:Event):void {
+            if (!starling) {
+                if (starlingComponent) {
+                    starlingRoot.addChild(_starlingComponent);
+                }
+            }
+            updateMask();
+            setupParents();
+            updateStarlingComponent();
+            if (isGloballyVisible()) {
+                setMask();
+                isMaskEnabled = true;
+            }
+        }
+
+        private function setupParents():void {
+            runOnParents(a);
+            function a(displayObject:flash.display.DisplayObject):void {
+                parentsInfo.push({displayObject: displayObject, originalMask: displayObject.mask});
+                if (displayObject == this || displayObject == application) {
+                    displayObject.addEventListener(ResizeEvent.RESIZE, onResize);
+                }
+                displayObject.addEventListener(FlexEvent.SHOW, hideShowHandler);
+                displayObject.addEventListener(FlexEvent.HIDE, hideShowHandler);
+            }
+        }
+
+        private function onResize(event:Event):void {
+            callLater(function a():void {
+                updateMask();
+                updateStarlingComponent();
+            });
+        }
+
+        private function updateMask():void {
+            if (!fullMask) {
+                fullMask = new UIComponent();
+                fullMask.blendMode = BlendMode.LAYER;
+            }
+            if (!maskGroup) {
+                maskGroup = new Group();
+                maskGroup.width = application.width;
+                maskGroup.height = application.height;
+                maskGroup.addElement(fullMask);
+            }
+            fullMask.graphics.clear();
+            fullMask.graphics.beginFill(0x666666);
+            fullMask.graphics.drawRect(0, 0, application.width, application.height);
+            fullMask.graphics.endFill();
+
+            var thisRealPosition:Point = localToGlobal(new Point());
+            if (!currentMask) {
+                currentMask = new Sprite();
+                currentMask.blendMode = BlendMode.ERASE;
+            }
+            currentMask.graphics.clear();
+            currentMask.graphics.beginFill(0);
+            currentMask.graphics.drawRect(thisRealPosition.x, thisRealPosition.y, this.width, this.height);
+            currentMask.graphics.endFill();
+        }
+
+        private function setMask():void {
+            for each (var o:* in parentsInfo) {
+                var displayObject:flash.display.DisplayObject = o.displayObject;
+                if (displayObject == this || !(displayObject is GroupBase)) {
+                    continue;
+                }
+                GroupBase(displayObject).mask = maskGroup;
+                GroupBase(displayObject).maskType = MaskType.ALPHA;
+            }
+            fullMask.addChild(currentMask);
+        }
+
+        private function unsetMask():void {
+            if (fullMask && fullMask.getChildIndex(currentMask) > -1) {
+                fullMask.removeChild(currentMask);
+            }
+        }
+
+        private function updateStarlingComponent():void {
+            if (!starlingComponent) {
+                return;
+            }
+            starlingComponent.x = localToGlobal(new Point()).x;
+            starlingComponent.y = localToGlobal(new Point()).y;
+            starlingComponent.width = width;
+            starlingComponent.height = height;
+        }
+
+        private function hideShowHandler(event:FlexEvent):void {
+            if (isGloballyVisible()) {
+                if (!isMaskEnabled) {
+                    updateMask();
+                    setMask();
+                    isMaskEnabled = true;
+                }
+            } else {
+                if (isMaskEnabled) {
+                    unsetMask();
+                    isMaskEnabled = false;
+                }
+            }
+        }
+
+        private function isGloballyVisible():Boolean {
+            var isVisible:Boolean = true;
+            for each (var info:* in parentsInfo) {
+                var displayObject:flash.display.DisplayObject = info.displayObject;
+                if (!displayObject.visible) {
+                    isVisible = false;
+                    break;
+                }
+            }
+            return isVisible;
+        }
+
+        private function runOnParents(func:Function, displayObject:flash.display.DisplayObject = null):void {
+            if (!displayObject) {
+                displayObject = this;
+            }
+            func(displayObject);
+            if (displayObject != application) {
+                runOnParents(func, displayObject.parent);
+            }
+        }
+        ]]>
+    </fx:Script>
+
+</s:Group>

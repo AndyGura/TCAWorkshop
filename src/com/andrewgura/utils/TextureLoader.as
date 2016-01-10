@@ -49,8 +49,8 @@ public class TextureLoader extends EventDispatcher {
         loader.load(new URLRequest(nativePath));
     }
 
-    private function encodePNG():void {
-        var pngData:ByteArray = (new PNGEncoder()).encode(texture.bitmap.bitmapData);
+    private function encodePNG(bitmap:Bitmap):void {
+        var pngData:ByteArray = (new PNGEncoder()).encode(bitmap.bitmapData);
         texture.processingProgress = 60;
         var file:File = new File(tempDirectory.nativePath + '\\' + texture.name + '.png');
         var fs:FileStream = new FileStream();
@@ -100,9 +100,11 @@ public class TextureLoader extends EventDispatcher {
     public function loadByBitmap(bitmap:Bitmap):void {
         texture.processingProgress = 30;
         texture.sourceBitmap = bitmap;
-        texture.bitmap = getResized(texture.sourceBitmap);
         tempDirectory = File.createTempDirectory();
-        encodePNG();
+        var resizedBitmap: Bitmap = getResized(texture.sourceBitmap);
+        encodePNG(resizedBitmap);
+        texture.atfWidth = resizedBitmap.width;
+        texture.atfHeight = resizedBitmap.height;
 
     }
 

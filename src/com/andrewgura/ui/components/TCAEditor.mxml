@@ -2,6 +2,7 @@
 <components:Editor xmlns:fx="http://ns.adobe.com/mxml/2009"
                    xmlns:s="library://ns.adobe.com/flex/spark"
                    xmlns:components="com.andrewgura.ui.components.*"
+                   xmlns:starlingwrapper="com.andrewgura.starlingWrapper.*"
                    addedToStage="onAddedToStage(event)">
 
     <fx:Script><![CDATA[
@@ -13,10 +14,16 @@
         import com.andrewgura.vo.TCAProjectVO;
         import com.andrewgura.vo.TextureVO;
 
+        import starling.display.Image;
+        import starling.textures.Texture;
+
         private var controller:TCAController;
 
         [Bindable]
         private var bitmapToView:Bitmap;
+
+        [Bindable]
+        private var starlingPreviewImage:starling.display.Image;
 
         override public function set project(value:ProjectVO):void {
             super.project = value;
@@ -51,7 +58,14 @@
         }
 
         private function updateBitmapToView(...bindings):Object {
-            bitmapToView = TextureVO(list.selectedItem)[viewModeTabBar.selectedItem.bitmapField];
+            if (!project || !list || !list.selectedItem || !list.dataProvider || !(list.selectedItem is TextureVO) || list.dataProvider != TCAProjectVO(project).imageCollection) {
+                bitmapToView = null;
+                starlingPreviewImage = null;
+                return null;
+            }
+            bitmapToView = TextureVO(list.selectedItem).sourceBitmap;
+            var texture:Texture = Texture.fromAtfData(TextureVO(list.selectedItem).atfData);
+            starlingPreviewImage = new starling.display.Image(texture);
             return null;
         }
 
@@ -60,7 +74,7 @@
         }
 
         private function onExportPngClick(event:MouseEvent):void {
-            controller.exportPicture(TextureVO(list.selectedItem).name, viewModeTabBar.selectedItem.bitmapField == "sourceBitmap");
+            controller.exportPicture(TextureVO(list.selectedItem).name);
         }
 
         private function onRenameTexture(event:DataObjectEvent):void {
@@ -72,7 +86,7 @@
 
     <fx:Declarations>
         <fx:Object>
-            {updateBitmapToView(TextureVO(list.selectedItem).bitmap, TextureVO(list.selectedItem).sourceBitmap, viewModeTabBar.selectedItem)}
+            {updateBitmapToView(project, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
         </fx:Object>
     </fx:Declarations>
 
@@ -97,14 +111,17 @@
                           width="100%" labelField="name">
                     <s:dataProvider>
                         <s:ArrayCollection>
-                            <fx:Object name="Source" bitmapField="sourceBitmap"/>
-                            <fx:Object name="ATF" bitmapField="bitmap"/>
+                            <fx:Object name="Source" id="bitmapTabItem"/>
+                            <fx:Object name="ATF" id="atfTabItem"/>
                         </s:ArrayCollection>
                     </s:dataProvider>
                 </s:TabBar>
                 <s:Group width="100%" height="100%">
-                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"/>
-                    <s:Image source="{bitmapToView}" width="100%" height="100%"/>
+                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat" visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                    <s:Image source="{bitmapToView}" width="100%" height="100%" visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                    <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
+                                                       starlingComponent="{starlingPreviewImage}"
+                                                       visible="{viewModeTabBar.selectedItem == atfTabItem}"/>
                     <s:Rect width="100%" height="100%">
                         <s:stroke>
                             <s:SolidColorStroke color="{getStyle('borderColor')}"/>
@@ -112,7 +129,7 @@
                     </s:Rect>
                 </s:Group>
                 <s:HGroup width="100%" verticalAlign="middle" visible="{bitmapToView}" includeInLayout="{bitmapToView}">
-                    <s:Label text="Dimensions: {bitmapToView.width}X{bitmapToView.height}"/>
+                    <s:Label text="Dimensions: {bitmapToView.width}X{bitmapToView.height}, ATF dimensions: {TextureVO(list.selectedItem).atfWidth}X{TextureVO(list.selectedItem).atfHeight}"/>
                     <s:Spacer width="100%"/>
                     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
                 </s:HGroup>

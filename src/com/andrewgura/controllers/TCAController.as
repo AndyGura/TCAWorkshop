@@ -68,12 +68,12 @@ public class TCAController {
         }
     }
 
-    public function exportPicture(name:String, isOriginal:Boolean):void {
+    public function exportPicture(name:String):void {
         var texture:TextureVO = getTextureByName(name);
         if (!texture) {
             return;
         }
-        var pngData:ByteArray = (new PNGEncoder()).encode(isOriginal ? texture.sourceBitmap.bitmapData : texture.bitmap.bitmapData);
+        var pngData:ByteArray = (new PNGEncoder()).encode(texture.sourceBitmap.bitmapData);
         var f:File;
         if (project.outputTcaPath) {
             f = File.applicationDirectory.resolvePath(project.fileName);

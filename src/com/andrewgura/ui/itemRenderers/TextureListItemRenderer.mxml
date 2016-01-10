@@ -35,20 +35,20 @@
 	</fx:Script>
 
     <s:Rect right="0" width="{(100-TextureVO(data).processingProgress)*width/100}" height="100%"
-            visible="{!TextureVO(data).atfData || !TextureVO(data).name || !TextureVO(data).bitmap}">
+            visible="{!TextureVO(data).atfData || !TextureVO(data).name}">
         <s:fill>
             <s:SolidColor color="#ff0000"/>
         </s:fill>
     </s:Rect>
 
     <s:HGroup width="100%" height="100%" paddingLeft="5" paddingRight="5" gap="5" verticalAlign="middle">
-        <s:BitmapImage source="{TextureVO(data).bitmap}" width="40" height="40"/>
+        <s:BitmapImage source="{TextureVO(data).sourceBitmap}" width="40" height="40"/>
         <s:Label text="{TextureVO(data).name}" visible="{!isInEditMode}" includeInLayout="{!isInEditMode}"/>
         <s:TextInput id="editNameTextInput" text="{TextureVO(data).name}"
                      visible="{isInEditMode}" includeInLayout="{isInEditMode}"
                      enter="onEditImageEnter(event)"/>
         <s:Spacer width="100%"/>
-        <s:Label text="{TextureVO(data).width}X{TextureVO(data).height}"/>
+        <s:Label text="{TextureVO(data).originalWidth}X{TextureVO(data).originalHeight} --> {TextureVO(data).atfWidth}X{TextureVO(data).atfHeight}"/>
     </s:HGroup>
 
 </s:ItemRenderer>

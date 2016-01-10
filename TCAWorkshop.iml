@@ -14,6 +14,9 @@
             <entry module-name="NFSNativeResourceLoader" build-configuration-name="NFSNativeResourceLoader">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-id="202415f5-1430-434d-8dda-2b0d1af02d2f">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="4.14.1.air-20.0" />
         </dependencies>
@@ -43,5 +46,15 @@
     <orderEntry type="module" module-name="BreezeTheme" exported="" />
     <orderEntry type="module" module-name="WorkshopAPI" exported="" />
     <orderEntry type="module" module-name="NFSNativeResourceLoader" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="202415f5-1430-434d-8dda-2b0d1af02d2f" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/starling.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

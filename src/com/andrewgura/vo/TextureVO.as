@@ -9,11 +9,13 @@ import flash.utils.ByteArray;
 [Bindable]
 public class TextureVO {
 
-    public var width:Number;
-    public var height:Number;
+    private var _sourceBitmap:Bitmap;
+    public var originalWidth:Number;
+    public var originalHeight:Number;
+    public var atfWidth:Number;
+    public var atfHeight:Number;
+
     public var atfData:ByteArray;
-    public var sourceBitmap:Bitmap;
-    private var _bitmap:Bitmap;
     public var name:String;
 
     public var processingProgress:Number = 0;
@@ -22,26 +24,24 @@ public class TextureVO {
         this.name = name;
     }
 
-    [Bindable(event="bitmapChanged")]
-    public function get bitmap():Bitmap {
-        return _bitmap;
+    [Bindable(event="sourceBitmapChanged")]
+    public function get sourceBitmap():Bitmap {
+        return _sourceBitmap;
     }
 
-    public function set bitmap(value:Bitmap):void {
-        _bitmap = value;
-        this.width = value.width;
-        this.height = value.height;
-        dispatchEvent(new Event("bitmapChanged"));
+    public function set sourceBitmap(value:Bitmap):void {
+        if (_sourceBitmap == value) return;
+        _sourceBitmap = value;
+        this.originalWidth = value.width;
+        this.originalHeight = value.height;
+        dispatchEvent(new Event("sourceBitmapChanged"));
     }
 
     public function serialize():ByteArray {
         var output:ByteArray = new ByteArray();
-        output.writeObject(this);
+        output.writeObject({name: name, atfData: atfData, atfWidth: atfWidth, atfHeight: atfHeight});
         var rect:Rectangle = new Rectangle(0, 0, sourceBitmap.width, sourceBitmap.height);
         var bytes:ByteArray = sourceBitmap.bitmapData.getPixels(rect);
-        output.writeObject({rect: rect, data: bytes});
-        rect = new Rectangle(0, 0, bitmap.width, bitmap.height);
-        bytes = bitmap.bitmapData.getPixels(rect);
         output.writeObject({rect: rect, data: bytes});
         return output;
     }
@@ -49,20 +49,13 @@ public class TextureVO {
     public function deserialize(data:ByteArray):void {
         var o:* = data.readObject();
         for (var field:String in o) {
-            if (field != "bitmap" && field != "sourceBitmap") {
-                this[field] = o[field];
-            }
+            this[field] = o[field];
         }
         o = data.readObject();
         var rect:Rectangle = new Rectangle(0, 0, o.rect.width, o.rect.height);
         var bitmapData:BitmapData = new BitmapData(rect.width, rect.height, true);
         bitmapData.setPixels(rect, o.data);
         sourceBitmap = new Bitmap(bitmapData);
-        o = data.readObject();
-        rect = new Rectangle(0, 0, o.rect.width, o.rect.height);
-        bitmapData = new BitmapData(rect.width, rect.height, true);
-        bitmapData.setPixels(rect, o.data);
-        bitmap = new Bitmap(bitmapData);
     }
 
 }
