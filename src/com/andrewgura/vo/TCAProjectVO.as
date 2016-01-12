@@ -86,7 +86,7 @@ public class TCAProjectVO extends ProjectVO {
     public function getExportedTCA():ByteArray {
         var output:ByteArray = new ByteArray();
         for each (var texture:TextureVO in imageCollection) {
-            output.writeObject({name: texture.name, data: texture.atfData});
+            output.writeObject(texture.tcaData);
         }
         output.compress();
         return output;

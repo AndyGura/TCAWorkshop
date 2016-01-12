@@ -20,6 +20,7 @@
         public static var starlingRoot:StarlingWrapperRoot;
         private static var starlingMasks:Array = [];
         public static var starling:Starling = function initStarling():void {
+            Starling.handleLostContext = true;
             var application:flash.display.DisplayObject = flash.display.DisplayObject(FlexGlobals.topLevelApplication);
             application.addEventListener(Event.ADDED_TO_STAGE, onApplicationAddedToStage);
         }();

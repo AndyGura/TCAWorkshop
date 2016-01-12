@@ -58,5 +58,9 @@ public class TextureVO {
         sourceBitmap = new Bitmap(bitmapData);
     }
 
+    public function get tcaData():Object {
+        return {texType: 0, name: name, data: atfData};
+    }
+
 }
 }

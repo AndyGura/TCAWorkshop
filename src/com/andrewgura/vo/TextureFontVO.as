@@ -20,6 +20,13 @@ public class TextureFontVO extends TextureVO {
         super.deserialize(data);
         fontXML = new XML(data.readUTFBytes(data.bytesAvailable));
     }
+
+    override public function get tcaData():Object {
+        var data:Object = super.tcaData;
+        data.texType = 1;
+        data.fontXML = fontXML;
+        return data;
+    }
 }
 
 }
