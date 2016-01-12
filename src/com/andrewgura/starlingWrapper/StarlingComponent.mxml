@@ -50,7 +50,7 @@
 
         private var application:flash.display.DisplayObject = flash.display.DisplayObject(FlexGlobals.topLevelApplication);
         private var parentsInfo:Array = [];
-        private var isMaskEnabled:Boolean = false;
+        private var isShow:Boolean = false;
         private var _starlingComponent:starling.display.DisplayObject;
         private var currentMask:Sprite;
         private static var maskGroup:Group;
@@ -68,11 +68,11 @@
             if (starlingRoot) {
                 starlingRoot.addChild(_starlingComponent);
             }
-            updateStarlingComponent();
-            if (!isMaskEnabled && isGloballyVisible()) {
+            if (!isShow && isGloballyVisible()) {
                 setMask();
-                isMaskEnabled = true;
+                isShow = true;
             }
+            updateStarlingComponent();
         }
 
         private function addedToStageHandler(event:Event):void {
@@ -83,11 +83,11 @@
             }
             updateMask();
             setupParents();
-            updateStarlingComponent();
             if (isGloballyVisible()) {
                 setMask();
-                isMaskEnabled = true;
+                isShow = true;
             }
+            updateStarlingComponent();
         }
 
         private function setupParents():void {
@@ -158,6 +158,10 @@
             if (!starlingComponent) {
                 return;
             }
+            starlingComponent.visible = isShow;
+            if (!isShow) {
+                return;
+            }
             starlingComponent.x = localToGlobal(new Point()).x;
             starlingComponent.y = localToGlobal(new Point()).y;
             starlingComponent.width = width;
@@ -166,15 +170,17 @@
 
         private function hideShowHandler(event:FlexEvent):void {
             if (isGloballyVisible()) {
-                if (!isMaskEnabled) {
+                if (!isShow) {
                     updateMask();
                     setMask();
-                    isMaskEnabled = true;
+                    isShow = true;
+                    updateStarlingComponent();
                 }
             } else {
-                if (isMaskEnabled) {
+                if (isShow) {
                     unsetMask();
-                    isMaskEnabled = false;
+                    isShow = false;
+                    updateStarlingComponent();
                 }
             }
         }

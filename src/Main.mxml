@@ -22,7 +22,7 @@
             config.projectFileType = new FileTypeVO('TCAWorkshop project file', 'tcp');
             config.importTypes = [
                 new FileTypeVO('Images', 'png', 'jpg'),
-                new FileTypeVO('NFS1 texture packs', 'fsh', 'qfs')
+                new FileTypeVO('NFS1 resources', 'fsh', 'qfs', 'ffn')
             ];
         }
         ]]>

@@ -5,19 +5,19 @@ import com.andrewgura.ui.popup.AppPopups;
 import com.andrewgura.ui.popup.PopupFactory;
 import com.andrewgura.utils.TextureLoader;
 import com.andrewgura.vo.TCAProjectVO;
+import com.andrewgura.vo.TextureFontVO;
 import com.andrewgura.vo.TextureVO;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
-
 import flash.events.Event;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
+import flash.net.FileFilter;
 import flash.utils.ByteArray;
 
 import mx.collections.ArrayCollection;
-
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 import mx.graphics.codec.PNGEncoder;
@@ -52,10 +52,10 @@ public class TCAController {
                 case 'fsh':
                 case 'qfs':
                     try {
-                        var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadTextureFile(file);
+                        var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadNativeFile(file);
                     } catch (e:Error) {
-                        PopupFactory.instance.showPopup(AppPopups.ERROR_POPUP, e.message);
-                        return;
+                        PopupFactory.instance.showPopup(AppPopups.ERROR_POPUP, file.name + ": " + e.message);
+                        continue;
                     }
                     for each (var nfsTexture:INativeBitmap in nfsTextures) {
                         texture = new TextureVO(nfsTexture.name);
@@ -63,6 +63,18 @@ public class TCAController {
                         textureWrap = new TextureLoader(texture);
                         textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
                     }
+                    break;
+                case 'ffn':
+                    try {
+                        var bd:BitmapData = NFSNativeResourceLoader.loadNativeFile(file);
+                    } catch (e:Error) {
+                        PopupFactory.instance.showPopup(AppPopups.ERROR_POPUP, file.name + ": " + e.message);
+                        continue;
+                    }
+                    texture = new TextureFontVO(file.name);
+                    addTexture(texture);
+                    textureWrap = new TextureLoader(texture);
+                    textureWrap.loadByBitmap(new Bitmap(bd));
                     break;
             }
         }
@@ -82,6 +94,38 @@ public class TCAController {
             f = new File();
         }
         f.save(pngData, name + '.png');
+    }
+
+    public function createFont(texture:TextureVO):void {
+        var newTexture:TextureFontVO = new TextureFontVO(texture.name);
+        newTexture.sourceBitmap = texture.sourceBitmap;
+        newTexture.atfData = texture.atfData;
+        newTexture.originalWidth = texture.originalWidth;
+        newTexture.originalHeight = texture.originalHeight;
+        newTexture.atfWidth = texture.atfWidth;
+        newTexture.atfHeight = texture.atfHeight;
+        project.imageCollection.setItemAt(newTexture, project.imageCollection.getItemIndex(texture));
+    }
+
+    public function importFontXml(font:TextureFontVO):void {
+        var f:File = new File();
+        f.addEventListener(Event.SELECT, onFileSelected);
+        f.addEventListener(Event.CANCEL, onFileSelectionCanceled);
+        f.browseForOpen('Select font XML', [new FileFilter('Font XML', '*.fnt')]);
+
+        function onFileSelected(event:Event):void {
+            File(event.target).removeEventListener(Event.SELECT, onFileSelected);
+            File(event.target).removeEventListener(Event.CANCEL, onFileSelectionCanceled);
+            var stream:FileStream = new FileStream();
+            stream.open(File(event.target), FileMode.READ);
+            var xml:XML = new XML(stream.readUTFBytes(stream.bytesAvailable));
+            font.fontXML = xml;
+        }
+
+        function onFileSelectionCanceled(event:Event):void {
+            File(event.target).removeEventListener(Event.SELECT, onFileSelected);
+            File(event.target).removeEventListener(Event.CANCEL, onFileSelectionCanceled);
+        }
     }
 
     public function exportTCA():void {
@@ -139,7 +183,7 @@ public class TCAController {
     public function getNewNameForDuplicate(name:String, excludeIndex:Number = -1):String {
         var newName:String = name;
         var i:Number = 0;
-        var foundTexture:TextureVO =  getTextureByName(newName);
+        var foundTexture:TextureVO = getTextureByName(newName);
         while (foundTexture != null && project.imageCollection.getItemIndex(foundTexture) != excludeIndex) {
             i++;
             newName = name + '_' + i;

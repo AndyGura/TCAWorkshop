@@ -6,6 +6,7 @@
     <fx:Script>
 		<![CDATA[
         import com.andrewgura.events.DataObjectEvent;
+        import com.andrewgura.vo.TextureFontVO;
         import com.andrewgura.vo.TextureVO;
 
         import mx.events.FlexEvent;
@@ -27,28 +28,37 @@
             if (!isInEditMode) {
                 return;
             }
-            dispatchEvent(new DataObjectEvent("renameTexture", {texture:data, newName: editNameTextInput.text}, true));
+            dispatchEvent(new DataObjectEvent("renameTexture", {texture: data, newName: editNameTextInput.text}, true));
             isInEditMode = false;
             this.setFocus();
         }
         ]]>
 	</fx:Script>
 
-    <s:Rect right="0" width="{(100-TextureVO(data).processingProgress)*width/100}" height="100%"
-            visible="{!TextureVO(data).atfData || !TextureVO(data).name}">
+    <s:Rect right="0" width="{(100-((data &amp;&amp; data is TextureVO) ? TextureVO(data).processingProgress : 0))*width/100}" height="100%"
+            visible="{data &amp;&amp; !TextureVO(data).atfData}">
         <s:fill>
             <s:SolidColor color="#ff0000"/>
         </s:fill>
     </s:Rect>
 
     <s:HGroup width="100%" height="100%" paddingLeft="5" paddingRight="5" gap="5" verticalAlign="middle">
-        <s:BitmapImage source="{TextureVO(data).sourceBitmap}" width="40" height="40"/>
+        <s:Group width="40" height="40">
+            <s:BitmapImage source="{TextureVO(data).sourceBitmap}" width="40" height="40">
+                <s:filters>
+                    <s:BlurFilter blurX="{data is TextureFontVO ? 5 : 0}" blurY="{data is TextureFontVO ? 5 : 0}"/>
+                </s:filters>
+            </s:BitmapImage>
+            <s:BitmapImage source="assets/font_overlap.png" horizontalCenter="0" verticalCenter="0"
+                           visible="{data is TextureFontVO}"/>
+        </s:Group>
         <s:Label text="{TextureVO(data).name}" visible="{!isInEditMode}" includeInLayout="{!isInEditMode}"/>
         <s:TextInput id="editNameTextInput" text="{TextureVO(data).name}"
                      visible="{isInEditMode}" includeInLayout="{isInEditMode}"
                      enter="onEditImageEnter(event)"/>
         <s:Spacer width="100%"/>
-        <s:Label text="{TextureVO(data).originalWidth}X{TextureVO(data).originalHeight} --> {TextureVO(data).atfWidth}X{TextureVO(data).atfHeight}"/>
+        <s:Label
+                text="{TextureVO(data).originalWidth}X{TextureVO(data).originalHeight} --> {TextureVO(data).atfWidth}X{TextureVO(data).atfHeight}"/>
     </s:HGroup>
 
 </s:ItemRenderer>

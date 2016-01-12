@@ -12,9 +12,13 @@
         import com.andrewgura.events.DataObjectEvent;
         import com.andrewgura.vo.ProjectVO;
         import com.andrewgura.vo.TCAProjectVO;
+        import com.andrewgura.vo.TextureFontVO;
         import com.andrewgura.vo.TextureVO;
 
+        import mx.collections.ArrayCollection;
+
         import starling.display.Image;
+        import starling.text.TextField;
         import starling.textures.Texture;
 
         private var controller:TCAController;
@@ -25,7 +29,11 @@
         [Bindable]
         private var starlingPreviewImage:starling.display.Image;
 
+        [Bindable]
+        public var fontShowTextField:starling.text.TextField;
+
         override public function set project(value:ProjectVO):void {
+            if (super.project == value) return;
             super.project = value;
             controller = new TCAController(TCAProjectVO(project));
         }
@@ -66,6 +74,14 @@
             bitmapToView = TextureVO(list.selectedItem).sourceBitmap;
             var texture:Texture = Texture.fromAtfData(TextureVO(list.selectedItem).atfData);
             starlingPreviewImage = new starling.display.Image(texture);
+
+            var tabs:Array = [bitmapTabItem, atfTabItem];
+            if (list.selectedItem is TextureFontVO) {
+                tabs.push(fontTabItem);
+                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", TextureVO(list.selectedItem).name, 32, 0xffffff);
+            }
+            viewModeTabBar.dataProvider = new ArrayCollection(tabs);
+
             return null;
         }
 
@@ -75,6 +91,14 @@
 
         private function onExportPngClick(event:MouseEvent):void {
             controller.exportPicture(TextureVO(list.selectedItem).name);
+        }
+
+        private function onCreateFontClick(event:MouseEvent):void {
+            controller.createFont(TextureVO(list.selectedItem));
+        }
+
+        private function onImportFontXmlClick(event:MouseEvent):void {
+            controller.importFontXml(TextureFontVO(list.selectedItem));
         }
 
         private function onRenameTexture(event:DataObjectEvent):void {
@@ -88,6 +112,9 @@
         <fx:Object>
             {updateBitmapToView(project, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
         </fx:Object>
+        <fx:Object name="Source" id="bitmapTabItem"/>
+        <fx:Object name="ATF" id="atfTabItem"/>
+        <fx:Object name="Font" id="fontTabItem"/>
     </fx:Declarations>
 
     <s:VGroup width="100%" height="100%"
@@ -108,20 +135,18 @@
             </s:VGroup>
             <s:VGroup width="100%" height="100%" gap="-1">
                 <s:TabBar id="viewModeTabBar"
-                          width="100%" labelField="name">
-                    <s:dataProvider>
-                        <s:ArrayCollection>
-                            <fx:Object name="Source" id="bitmapTabItem"/>
-                            <fx:Object name="ATF" id="atfTabItem"/>
-                        </s:ArrayCollection>
-                    </s:dataProvider>
-                </s:TabBar>
+                          width="100%" labelField="name"/>
                 <s:Group width="100%" height="100%">
-                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat" visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
-                    <s:Image source="{bitmapToView}" width="100%" height="100%" visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"
+                             visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                    <s:Image source="{bitmapToView}" width="100%" height="100%"
+                             visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
                     <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                                        starlingComponent="{starlingPreviewImage}"
                                                        visible="{viewModeTabBar.selectedItem == atfTabItem}"/>
+                    <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
+                                                       starlingComponent="{fontShowTextField}"
+                                                       visible="{viewModeTabBar.selectedItem == fontTabItem}"/>
                     <s:Rect width="100%" height="100%">
                         <s:stroke>
                             <s:SolidColorStroke color="{getStyle('borderColor')}"/>
@@ -129,8 +154,15 @@
                     </s:Rect>
                 </s:Group>
                 <s:HGroup width="100%" verticalAlign="middle" visible="{bitmapToView}" includeInLayout="{bitmapToView}">
-                    <s:Label text="Dimensions: {bitmapToView.width}X{bitmapToView.height}, ATF dimensions: {TextureVO(list.selectedItem).atfWidth}X{TextureVO(list.selectedItem).atfHeight}"/>
+                    <s:Label
+                            text="Original dimensions: {bitmapToView.width}X{bitmapToView.height}, ATF dimensions: {TextureVO(list.selectedItem).atfWidth}X{TextureVO(list.selectedItem).atfHeight}"/>
                     <s:Spacer width="100%"/>
+                    <s:Button label="Create font" click="onCreateFontClick(event)"
+                              visible="{!(list.selectedItem is TextureFontVO)}"
+                              includeInLayout="{!(list.selectedItem is TextureFontVO)}"/>
+                    <s:Button label="Import font xml" click="onImportFontXmlClick(event)"
+                              visible="{list.selectedItem is TextureFontVO}"
+                              includeInLayout="{list.selectedItem is TextureFontVO}"/>
                     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
                 </s:HGroup>
             </s:VGroup>
