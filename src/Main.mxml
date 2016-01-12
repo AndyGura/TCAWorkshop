@@ -24,7 +24,8 @@
             config.projectFileTypes = [new FileTypeVO('TCAWorkshop project file', 'tcp'), new FileTypeVO('GMFWorkshop project file', 'gmf')];
             config.importTypes = [
                 new ImportFileTypeVO(config.projectFileTypes[0], 'Images', 'png', 'jpg'),
-                new ImportFileTypeVO(config.projectFileTypes[0], 'NFS1 resources', 'fsh', 'qfs', 'ffn')
+                new ImportFileTypeVO(config.projectFileTypes[0], 'NFS1 texture resources', 'fsh', 'qfs', 'ffn'),
+                new ImportFileTypeVO(config.projectFileTypes[1], 'NFS1 geometry resources', 'cfm')
             ];
         }
         ]]>

@@ -38,6 +38,7 @@ public class TCAController {
         }
     }
 
+    //TODO rework this method
     public function importFiles(files:Array):void {
         var textureWrap:TextureLoader;
         var texture:TextureVO;
@@ -51,6 +52,7 @@ public class TCAController {
                     break;
                 case 'fsh':
                 case 'qfs':
+                case 'cfm':
                     try {
                         var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadNativeFile(file);
                     } catch (e:Error) {
