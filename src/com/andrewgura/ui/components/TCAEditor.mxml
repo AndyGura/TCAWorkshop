@@ -170,7 +170,7 @@
 
     </s:VGroup>
 
-    <s:Label text="Welcome to TCAWorkshop.{'\n'}Create new project or open an existing one"
+    <s:Label text="Welcome to TCAGMFWorkshop.{'\n'}Create new project or open an existing one"
              horizontalCenter="0" verticalCenter="0"
              lineBreak="explicit" textAlign="center"
              visible="{!project}"/>

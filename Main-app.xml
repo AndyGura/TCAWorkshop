@@ -15,10 +15,10 @@
     <id>TCAWS</id>
 
     <!-- Used as the filename for the application. Required. -->
-    <filename>TCAWorkshop</filename>
+    <filename>TCAGMFWorkshop</filename>
 
     <!-- The name that is displayed in the AIR application installer. May have multiple values for each language. See samples or xsd schema file. Optional. -->
-    <name>TCAWorkshop</name>
+    <name>TCAGMFWorkshop</name>
 
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade.
          Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -172,10 +172,28 @@
             <contentType>application/octet-stream</contentType>
             <!-- The icon to display for the file type. Optional. -->
             <!--<icon>-->
-                <!--<image16x16>assets/app_icon/icon_16.png</image16x16>-->
-                <!--<image32x32>assets/app_icon/icon_32.png</image32x32>-->
-                <!--<image48x48>assets/app_icon/icon_48.png</image48x48>-->
-                <!--<image128x128>assets/app_icon/icon_128.png</image128x128>-->
+            <!--<image16x16>assets/app_icon/icon_16.png</image16x16>-->
+            <!--<image32x32>assets/app_icon/icon_32.png</image32x32>-->
+            <!--<image48x48>assets/app_icon/icon_48.png</image48x48>-->
+            <!--<image128x128>assets/app_icon/icon_128.png</image128x128>-->
+            <!--</icon>-->
+        </fileType>
+        <!-- Defines one file type. Optional. -->
+        <fileType>
+            <!-- The name that the system displays for the registered file type. Required. -->
+            <name>gmp.project.file</name>
+            <!-- The extension to register. Required. -->
+            <extension>gmp</extension>
+            <!-- The description of the file type. Optional. -->
+            <description>GMP Workshop project file</description>
+            <!-- The MIME content type. -->
+            <contentType>application/octet-stream</contentType>
+            <!-- The icon to display for the file type. Optional. -->
+            <!--<icon>-->
+            <!--<image16x16>assets/app_icon/icon_16.png</image16x16>-->
+            <!--<image32x32>assets/app_icon/icon_32.png</image32x32>-->
+            <!--<image48x48>assets/app_icon/icon_48.png</image48x48>-->
+            <!--<image128x128>assets/app_icon/icon_128.png</image128x128>-->
             <!--</icon>-->
         </fileType>
     </fileTypes>
