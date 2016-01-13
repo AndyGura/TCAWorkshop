@@ -8,8 +8,6 @@
         import com.andrewgura.ui.components.TCAEditor;
         import com.andrewgura.ui.components.TCASettingsPanel;
         import com.andrewgura.vo.FileTypeVO;
-        import com.andrewgura.vo.GMFProjectVO;
-        import com.andrewgura.vo.ImportFileTypeVO;
         import com.andrewgura.vo.TCAProjectVO;
         import com.andrewgura.vo.WorkshopConfigVO;
 
@@ -19,13 +17,12 @@
         private function onPreinitialize(event:Event):void {
             config = new WorkshopConfigVO();
             config.editorClass = TCAEditor;
-            config.projectClasses = [TCAProjectVO, GMFProjectVO];
-            config.settingsPanelClasses = [TCASettingsPanel, TCASettingsPanel];
-            config.projectFileTypes = [new FileTypeVO('TCAWorkshop project file', 'tcp'), new FileTypeVO('GMFWorkshop project file', 'gmf')];
+            config.projectClass = TCAProjectVO;
+            config.settingsPanelClass = TCASettingsPanel;
+            config.projectFileType = new FileTypeVO('TCAWorkshop project file', 'tcp');
             config.importTypes = [
-                new ImportFileTypeVO(config.projectFileTypes[0], 'Images', 'png', 'jpg'),
-                new ImportFileTypeVO(config.projectFileTypes[0], 'NFS1 texture resources', 'fsh', 'qfs', 'ffn'),
-                new ImportFileTypeVO(config.projectFileTypes[1], 'NFS1 geometry resources', 'cfm')
+                new FileTypeVO('Images', 'png', 'jpg'),
+                new FileTypeVO('NFS1 resources', 'fsh', 'qfs', 'ffn')
             ];
         }
         ]]>
