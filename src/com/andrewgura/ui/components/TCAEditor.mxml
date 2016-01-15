@@ -138,15 +138,15 @@
                           width="100%" labelField="name"/>
                 <s:Group width="100%" height="100%">
                     <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"
-                             visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                             visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
                     <s:Image source="{bitmapToView}" width="100%" height="100%"
-                             visible="{viewModeTabBar.selectedItem == bitmapTabItem}"/>
+                             visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
                     <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                                        starlingComponent="{starlingPreviewImage}"
-                                                       visible="{viewModeTabBar.selectedItem == atfTabItem}"/>
+                                                       visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == atfTabItem}"/>
                     <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                                        starlingComponent="{fontShowTextField}"
-                                                       visible="{viewModeTabBar.selectedItem == fontTabItem}"/>
+                                                       visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == fontTabItem}"/>
                     <s:Rect width="100%" height="100%">
                         <s:stroke>
                             <s:SolidColorStroke color="{getStyle('borderColor')}"/>
