@@ -105,7 +105,6 @@ public class TextureLoader extends EventDispatcher {
         encodePNG(resizedBitmap);
         texture.atfWidth = resizedBitmap.width;
         texture.atfHeight = resizedBitmap.height;
-
     }
 
     private function onLoadComplete(event:Event):void {
@@ -128,6 +127,7 @@ public class TextureLoader extends EventDispatcher {
         f.close();
         texture.atfData = data;
         tempDirectory.deleteDirectoryAsync(true);
+        dispatchEvent(new Event(GENERATION_DONE_EVENT));
     }
 
 }

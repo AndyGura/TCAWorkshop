@@ -1,4 +1,4 @@
-package com.andrewgura.starlingWrapper {
+package com.andrewgura.stageComponentsWrapper {
 
 import starling.display.Sprite;
 
