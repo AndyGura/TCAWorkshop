@@ -47,9 +47,13 @@
             var viewPortRectangle:Rectangle = new Rectangle();
             viewPortRectangle.width = stageWidth;
             viewPortRectangle.height = stageHeight;
-            Starling.current.viewPort = viewPortRectangle;
-            starling.stage.stageWidth = stageWidth;
-            starling.stage.stageHeight = stageHeight;
+            if (Starling.current) {
+                Starling.current.viewPort = viewPortRectangle;
+            }
+            if (starling && starling.stage) {
+                starling.stage.stageWidth = stageWidth;
+                starling.stage.stageHeight = stageHeight;
+            }
         }
 
         private var application:flash.display.DisplayObject = flash.display.DisplayObject(FlexGlobals.topLevelApplication);
