@@ -34,7 +34,10 @@
             starling.start();
         }
 
-        private static function onStageResized(e:Event):void {
+        private static function onStageResized(e:Event = null):void {
+            if (visibleStarlingComponentsCount == 0) {
+                return;
+            }
             var stage:Stage = FlexGlobals.topLevelApplication.stage;
             if (stage.stageWidth == 0 || stage.stageHeight == 0) {
                 return;
@@ -56,6 +59,7 @@
         private var currentMask:Sprite;
         private static var maskGroup:Group;
         private static var fullMask:UIComponent;
+        private static var visibleStarlingComponentsCount:Number = 0;
 
         public function get starlingComponent():starling.display.DisplayObject {
             return _starlingComponent;
@@ -72,6 +76,10 @@
             if (!isShow && isGloballyVisible()) {
                 setMask();
                 isShow = true;
+                visibleStarlingComponentsCount++;
+                if (visibleStarlingComponentsCount==1) {
+                    onStageResized();
+                }
             }
             updateStarlingComponent();
         }
@@ -87,6 +95,10 @@
             if (isGloballyVisible()) {
                 setMask();
                 isShow = true;
+                visibleStarlingComponentsCount++;
+                if (visibleStarlingComponentsCount==1) {
+                    onStageResized();
+                }
             }
             updateStarlingComponent();
         }
@@ -105,6 +117,9 @@
 
         private function onResize(event:Event):void {
             callLater(function a():void {
+                if (visibleStarlingComponentsCount == 0) {
+                    return;
+                }
                 updateMask();
                 updateStarlingComponent();
             });
@@ -153,6 +168,15 @@
             if (fullMask && fullMask.getChildIndex(currentMask) > -1) {
                 fullMask.removeChild(currentMask);
             }
+            if (fullMask.numChildren == 0) {
+                for each (var o:* in parentsInfo) {
+                    var displayObject:flash.display.DisplayObject = o.displayObject;
+                    if (displayObject == this || !(displayObject is GroupBase)) {
+                        continue;
+                    }
+                    GroupBase(displayObject).mask = null;
+                }
+            }
         }
 
         private function updateStarlingComponent():void {
@@ -175,12 +199,17 @@
                     updateMask();
                     setMask();
                     isShow = true;
+                    visibleStarlingComponentsCount++;
+                    if (visibleStarlingComponentsCount==1) {
+                        onStageResized();
+                    }
                     updateStarlingComponent();
                 }
             } else {
                 if (isShow) {
                     unsetMask();
                     isShow = false;
+                    visibleStarlingComponentsCount--;
                     updateStarlingComponent();
                 }
             }
