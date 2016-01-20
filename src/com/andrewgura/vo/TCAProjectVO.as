@@ -25,6 +25,9 @@ public class TCAProjectVO extends ProjectVO {
     public static var tcaTextureTypeMap:Dictionary = prepareTextureTypeMap();
     public static var tcaTextureClassMap:Dictionary = prepareTextureClassMap();
 
+    public var loadedPercent:Number = 100;
+    public var isFullyLoaded:Boolean = true;
+
     private static function prepareTextureTypeMap():Dictionary {
         var dict:Dictionary = new Dictionary();
         dict[TextureVO] = 0;
@@ -80,6 +83,8 @@ public class TCAProjectVO extends ProjectVO {
     }
 
     override public function importFiles(files:Array):void {
+        isFullyLoaded = false;
+        loadedPercent = 0;
         (new TCAController(this)).importFiles(files);
     }
 

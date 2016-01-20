@@ -1,5 +1,6 @@
 package com.andrewgura.utils {
 
+import com.andrewgura.events.DataObjectEvent;
 import com.andrewgura.vo.TextureVO;
 
 import flash.desktop.NativeProcess;
@@ -27,10 +28,22 @@ public class TextureLoader extends EventDispatcher {
     public static var canExecuteATF2PNG:Number = 8;
 
     public static const GENERATION_DONE_EVENT:String = "GENERATION_DONE_EVENT";
+    public static const GENERATION_PERCENT_EVENT:String = "GENERATION_PERCENT_EVENT";
 
     private var nativePath:String;
     private var texture:TextureVO;
     private var tempDirectory:File;
+
+    private var _processingProgress:Number = 0;
+    public function get processingProgress():Number {
+        return _processingProgress;
+    }
+
+    public function set processingProgress(value:Number):void {
+        if (_processingProgress == value) return;
+        _processingProgress = value;
+        dispatchEvent(new DataObjectEvent(GENERATION_PERCENT_EVENT, _processingProgress));
+    }
 
     public function TextureLoader(texture:TextureVO, nativePath:String = null) {
         this.texture = texture;
@@ -43,7 +56,7 @@ public class TextureLoader extends EventDispatcher {
     }
 
     private function loadByFilePath():void {
-        texture.processingProgress = 10;
+        processingProgress = 10;
         var loader:Loader = new Loader();
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadComplete);
         loader.load(new URLRequest(nativePath));
@@ -51,7 +64,7 @@ public class TextureLoader extends EventDispatcher {
 
     private function encodePNG(bitmap:Bitmap):void {
         var pngData:ByteArray = (new PNGEncoder()).encode(bitmap.bitmapData);
-        texture.processingProgress = 60;
+        processingProgress = 60;
         var file:File = new File(tempDirectory.nativePath + '\\' + texture.name + '.png');
         var fs:FileStream = new FileStream();
         fs.open(file, FileMode.WRITE);
@@ -98,10 +111,10 @@ public class TextureLoader extends EventDispatcher {
     }
 
     public function loadByBitmap(bitmap:Bitmap):void {
-        texture.processingProgress = 30;
+        processingProgress = 30;
         texture.sourceBitmap = bitmap;
         tempDirectory = File.createTempDirectory();
-        var resizedBitmap: Bitmap = getResized(texture.sourceBitmap);
+        var resizedBitmap:Bitmap = getResized(texture.sourceBitmap);
         encodePNG(resizedBitmap);
         texture.atfWidth = resizedBitmap.width;
         texture.atfHeight = resizedBitmap.height;
@@ -112,7 +125,7 @@ public class TextureLoader extends EventDispatcher {
     }
 
     private function onInputHandler(event:Event):void {
-        texture.processingProgress += 10;
+        processingProgress += 10;
     }
 
     private function exitNativeProcessHandler(event:NativeProcessExitEvent):void {
@@ -129,6 +142,5 @@ public class TextureLoader extends EventDispatcher {
         tempDirectory.deleteDirectoryAsync(true);
         dispatchEvent(new Event(GENERATION_DONE_EVENT));
     }
-
 }
 }

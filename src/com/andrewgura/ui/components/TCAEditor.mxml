@@ -3,6 +3,7 @@
                    xmlns:s="library://ns.adobe.com/flex/spark"
                    xmlns:components="com.andrewgura.ui.components.*"
                    xmlns:starlingwrapper="com.andrewgura.stageComponentsWrapper.*"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
                    addedToStage="onAddedToStage(event)">
 
     <fx:Script><![CDATA[
@@ -105,12 +106,21 @@
             var newName:String = controller.getNewNameForDuplicate(event.data.newName, TCAProjectVO(project).imageCollection.getItemIndex(event.data.texture));
             event.data.texture.name = newName;
         }
+
+        private function updateProgress(...bindings):Object {
+            progressBar.setProgress(TCAProjectVO(project).loadedPercent, 100);
+            return null;
+        }
+
         ]]>
     </fx:Script>
 
     <fx:Declarations>
         <fx:Object>
             {updateBitmapToView(project, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
+        </fx:Object>
+        <fx:Object>
+            {updateProgress(project, TCAProjectVO(project).isFullyLoaded, TCAProjectVO(project).loadedPercent)}
         </fx:Object>
         <fx:Object name="Source" id="bitmapTabItem"/>
         <fx:Object name="ATF" id="atfTabItem"/>
@@ -167,6 +177,10 @@
                 </s:HGroup>
             </s:VGroup>
         </s:HGroup>
+
+        <mx:ProgressBar width="100%" id="progressBar" minimum="0" maximum="0" mode="manual"
+                        visible="{project &amp;&amp; !TCAProjectVO(project).isFullyLoaded}"
+                        includeInLayout="{project &amp;&amp; !TCAProjectVO(project).isFullyLoaded}"/>
 
     </s:VGroup>
 

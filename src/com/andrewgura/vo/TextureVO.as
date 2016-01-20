@@ -18,8 +18,6 @@ public class TextureVO {
     public var atfData:ByteArray;
     public var name:String;
 
-    public var processingProgress:Number = 0;
-
     public function TextureVO(name:String) {
         this.name = name;
     }

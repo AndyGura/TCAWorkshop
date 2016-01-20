@@ -1,8 +1,10 @@
 package com.andrewgura.controllers {
+import com.andrewgura.events.DataObjectEvent;
 import com.andrewgura.nfs12NativeFileFormats.NFSNativeResourceLoader;
 import com.andrewgura.nfs12NativeFileFormats.textures.bitmaps.INativeBitmap;
 import com.andrewgura.ui.popup.AppPopups;
 import com.andrewgura.ui.popup.PopupFactory;
+import com.andrewgura.utils.DictionaryUtils;
 import com.andrewgura.utils.TextureLoader;
 import com.andrewgura.vo.TCAProjectVO;
 import com.andrewgura.vo.TextureFontVO;
@@ -16,6 +18,7 @@ import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
 import flash.net.FileFilter;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import mx.collections.ArrayCollection;
 import mx.events.CollectionEvent;
@@ -38,9 +41,14 @@ public class TCAController {
         }
     }
 
+    private var loaders:Dictionary;
+    private var texCount:Number = 0;
+
     public function importFiles(files:Array):void {
         var textureWrap:TextureLoader;
         var texture:TextureVO;
+        loaders = new Dictionary();
+        texCount = 0;
         for each (var file:File in files) {
             switch (file.extension.toLowerCase()) {
                 case 'png':
@@ -48,6 +56,10 @@ public class TCAController {
                     texture = new TextureVO(file.name.substr(0, file.name.length - 4));
                     addTexture(texture);
                     textureWrap = new TextureLoader(texture, file.nativePath);
+                    textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+                    textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+                    loaders[textureWrap] = 0;
+                    texCount++;
                     break;
                 case 'fsh':
                 case 'qfs':
@@ -62,6 +74,10 @@ public class TCAController {
                         addTexture(texture);
                         textureWrap = new TextureLoader(texture);
                         textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
+                        textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+                        textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+                        loaders[textureWrap] = 0;
+                        texCount++;
                     }
                     break;
                 case 'ffn':
@@ -75,9 +91,41 @@ public class TCAController {
                     addTexture(texture);
                     textureWrap = new TextureLoader(texture);
                     textureWrap.loadByBitmap(new Bitmap(bd));
+                    textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+                    textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+                    loaders[textureWrap] = 0;
+                    texCount++;
                     break;
             }
         }
+        project.loadedPercent = 30;
+    }
+
+    private function onATFGenerationComplete(event:Event):void {
+        event.target.removeEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+        event.target.removeEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+        delete loaders[event.target];
+        var percent:Number = 30 + 70 * (1 - DictionaryUtils.countKeys(loaders) / texCount);
+        var parPercent:Number = 0;
+        for (var key:* in loaders) {
+            parPercent += loaders[key];
+        }
+        percent += ((parPercent / 100) * (100 - percent)) / (DictionaryUtils.countKeys(loaders));
+        project.loadedPercent = percent;
+        if (DictionaryUtils.countKeys(loaders) == 0) {
+            project.isFullyLoaded = true;
+        }
+    }
+
+    private function onATFPercentEvent(event:DataObjectEvent):void {
+        loaders[event.target] = event.data;
+        var percent:Number = 30 + 70 * (1 - DictionaryUtils.countKeys(loaders) / texCount);
+        var parPercent:Number = 0;
+        for (var key:* in loaders) {
+            parPercent += loaders[key];
+        }
+        percent += ((parPercent / 100) * (100 - percent)) / (DictionaryUtils.countKeys(loaders));
+        project.loadedPercent = percent;
     }
 
     public function exportPicture(name:String):void {
