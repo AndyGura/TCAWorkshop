@@ -130,7 +130,6 @@ public class TextureLoader extends EventDispatcher {
 
     private function exitNativeProcessHandler(event:NativeProcessExitEvent):void {
         canExecuteATF2PNG++;
-        texture.processingProgress = 100;
         trace('Convert to atf complete', texture.name);
         var file:File = new File(tempDirectory.nativePath + '\\' + texture.name + '.atf');
         var data:ByteArray = new ByteArray();
