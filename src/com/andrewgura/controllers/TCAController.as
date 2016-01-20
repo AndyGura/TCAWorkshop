@@ -1,6 +1,8 @@
 package com.andrewgura.controllers {
 import com.andrewgura.events.DataObjectEvent;
 import com.andrewgura.nfs12NativeFileFormats.NFSNativeResourceLoader;
+import com.andrewgura.nfs12NativeFileFormats.NativeFfnFile;
+import com.andrewgura.nfs12NativeFileFormats.NativeShpiArchiveFile;
 import com.andrewgura.nfs12NativeFileFormats.textures.bitmaps.INativeBitmap;
 import com.andrewgura.ui.popup.AppPopups;
 import com.andrewgura.ui.popup.PopupFactory;
@@ -61,44 +63,49 @@ public class TCAController {
                     loaders[textureWrap] = 0;
                     texCount++;
                     break;
-                case 'fsh':
-                case 'qfs':
+                default:
                     try {
-                        var nfsTextures:ArrayCollection = NFSNativeResourceLoader.loadNativeFile(file);
+                        var nfsData:* = NFSNativeResourceLoader.loadNativeFile(file);
                     } catch (e:Error) {
                         PopupFactory.instance.showPopup(AppPopups.ERROR_POPUP, file.name + ": " + e.message);
                         continue;
                     }
-                    for each (var nfsTexture:INativeBitmap in nfsTextures) {
-                        texture = new TextureVO(nfsTexture.name);
-                        addTexture(texture);
-                        textureWrap = new TextureLoader(texture);
-                        textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
-                        textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
-                        textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
-                        loaders[textureWrap] = 0;
-                        texCount++;
-                    }
-                    break;
-                case 'ffn':
-                    try {
-                        var bd:BitmapData = NFSNativeResourceLoader.loadNativeFile(file);
-                    } catch (e:Error) {
-                        PopupFactory.instance.showPopup(AppPopups.ERROR_POPUP, file.name + ": " + e.message);
-                        continue;
-                    }
-                    texture = new TextureFontVO(file.name);
-                    addTexture(texture);
-                    textureWrap = new TextureLoader(texture);
-                    textureWrap.loadByBitmap(new Bitmap(bd));
-                    textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
-                    textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
-                    loaders[textureWrap] = 0;
-                    texCount++;
+                    importNfsData(nfsData);
                     break;
             }
         }
         project.loadedPercent = 30;
+    }
+
+    public function importNfsData(nfsData:*):void {
+        project.loadedPercent = 0;
+        project.isFullyLoaded = false;
+        if (!loaders) {
+            loaders = new Dictionary();
+        }
+        var texture:TextureVO;
+        var textureWrap:TextureLoader;
+        if (nfsData is NativeShpiArchiveFile) {
+            for each (var nfsTexture:INativeBitmap in nfsData) {
+                texture = new TextureVO(nfsTexture.name);
+                addTexture(texture);
+                textureWrap = new TextureLoader(texture);
+                textureWrap.loadByBitmap(new Bitmap(BitmapData(nfsTexture)));
+                textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+                textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+                loaders[textureWrap] = 0;
+                texCount++;
+            }
+        } else if (nfsData is NativeFfnFile) {
+            texture = new TextureFontVO(nfsData.name);
+            addTexture(texture);
+            textureWrap = new TextureLoader(texture);
+            textureWrap.loadByBitmap(new Bitmap(nfsData));
+            textureWrap.addEventListener(TextureLoader.GENERATION_DONE_EVENT, onATFGenerationComplete);
+            textureWrap.addEventListener(TextureLoader.GENERATION_PERCENT_EVENT, onATFPercentEvent);
+            loaders[textureWrap] = 0;
+            texCount++;
+        }
     }
 
     private function onATFGenerationComplete(event:Event):void {
