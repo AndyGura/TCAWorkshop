@@ -18,7 +18,7 @@
             config = new WorkshopConfigVO();
             config.editorClass = TCAEditor;
             config.projectClass = TCAProjectVO;
-            config.settingsPanelClass = TCASettingsPanel;
+            config.projectSettingsPanelClass = TCASettingsPanel;
             config.projectFileType = new FileTypeVO('TCAWorkshop project file', 'tcp');
             config.importTypes = [
                 new FileTypeVO('Images', 'png', 'jpg'),

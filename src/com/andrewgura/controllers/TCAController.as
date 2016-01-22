@@ -121,6 +121,7 @@ public class TCAController {
         project.loadedPercent = percent;
         if (DictionaryUtils.countKeys(loaders) == 0) {
             project.isFullyLoaded = true;
+            project.dispatchEvent(new Event(TCAProjectVO.LOADING_COMPLETE));
         }
     }
 

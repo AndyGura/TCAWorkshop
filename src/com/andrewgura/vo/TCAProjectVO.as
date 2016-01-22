@@ -20,6 +20,8 @@ import starling.textures.Texture;
 [Bindable]
 public class TCAProjectVO extends ProjectVO {
 
+    public static const LOADING_COMPLETE:String = 'LOADING_COMPLETE';
+
     public var outputTcaPath:String = '';
     public var imageCollection:ArrayCollection = new ArrayCollection();
     public static var tcaTextureTypeMap:Dictionary = prepareTextureTypeMap();

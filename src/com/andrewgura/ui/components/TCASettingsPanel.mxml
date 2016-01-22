@@ -4,12 +4,11 @@
                           xmlns:components="com.andrewgura.ui.components.*">
 
     <fx:Script><![CDATA[
-        import com.andrewgura.vo.ProjectVO;
         import com.andrewgura.vo.TCAProjectVO;
 
-        override public function set project(value:ProjectVO):void {
-            super.project = value;
-            outputTcaPath = TCAProjectVO(value).outputTcaPath;
+        override public function set data(value:Object):void {
+            super.data = value;
+            outputTcaPath = TCAProjectVO(value.project).outputTcaPath;
         }
 
         [Bindable]
