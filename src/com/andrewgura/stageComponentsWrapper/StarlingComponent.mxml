@@ -40,8 +40,14 @@
         }
 
         private function addedToStageHandler(event:Event):void {
+            instances.push(this);
+            addEventListener(Event.ENTER_FRAME, _onEnterFrame);
+            if (!isReady) {
+                addedToStageHandlers.push(addedToStageHandler);
+                return;
+            }
             if (!starling) {
-                starling = new Starling(StarlingWrapperRoot, stage);
+                starling = new Starling(StarlingWrapperRoot, stage, StageComponent.stage3DProxy.viewPort, StageComponent.stage3DProxy.stage3D);
                 starling.start();
                 if (starlingComponent) {
                     starlingRoot.addChild(_starlingComponent);
@@ -83,6 +89,11 @@
             super.hideShowHandler(event);
             updateStarlingComponent();
         }
+
+        override protected function render():void {
+            starling.nextFrame();
+        }
+
         ]]>
     </fx:Script>
 

@@ -37,6 +37,7 @@
             if (super.project == value) return;
             super.project = value;
             controller = new TCAController(TCAProjectVO(project));
+            updateBitmapToView();
         }
 
         private function onAddedToStage(event:Event):void {
@@ -117,7 +118,7 @@
 
     <fx:Declarations>
         <fx:Object>
-            {updateBitmapToView(project, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
+            {updateBitmapToView(visible, project, list, list.selectedItem, list.dataProvider, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
         </fx:Object>
         <fx:Object>
             {updateProgress(project, TCAProjectVO(project).isFullyLoaded, TCAProjectVO(project).loadedPercent)}
