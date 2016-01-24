@@ -14,7 +14,7 @@
             <entry module-name="NFSNativeResourceLoader" build-configuration-name="NFSNativeResourceLoader">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-id="202415f5-1430-434d-8dda-2b0d1af02d2f">
+            <entry module-name="StarlingAway3DinFlex" build-configuration-name="StarlingAway3DinFlex">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -46,15 +46,6 @@
     <orderEntry type="module" module-name="BreezeTheme" exported="" />
     <orderEntry type="module" module-name="WorkshopAPI" exported="" />
     <orderEntry type="module" module-name="NFSNativeResourceLoader" exported="" />
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="202415f5-1430-434d-8dda-2b0d1af02d2f" />
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/starling.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="StarlingAway3DinFlex" exported="" />
   </component>
 </module>
