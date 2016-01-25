@@ -2,12 +2,10 @@
 <components:Editor xmlns:fx="http://ns.adobe.com/mxml/2009"
                    xmlns:s="library://ns.adobe.com/flex/spark"
                    xmlns:components="com.andrewgura.ui.components.*"
-                   xmlns:starlingwrapper="com.andrewgura.stageComponentsWrapper.*"
-                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:editor="com.andrewgura.ui.components.editor.*"
                    addedToStage="onAddedToStage(event)">
 
     <fx:Script><![CDATA[
-        import com.andrewgura.consts.AssetsConsts;
         import com.andrewgura.controllers.MainController;
         import com.andrewgura.controllers.TCAController;
         import com.andrewgura.events.DataObjectEvent;
@@ -16,28 +14,12 @@
         import com.andrewgura.vo.TextureFontVO;
         import com.andrewgura.vo.TextureVO;
 
-        import mx.collections.ArrayCollection;
-
-        import starling.display.Image;
-        import starling.text.TextField;
-        import starling.textures.Texture;
-
         private var controller:TCAController;
-
-        [Bindable]
-        private var bitmapToView:Bitmap;
-
-        [Bindable]
-        private var starlingPreviewImage:starling.display.Image;
-
-        [Bindable]
-        public var fontShowTextField:starling.text.TextField;
 
         override public function set project(value:ProjectVO):void {
             if (super.project == value) return;
             super.project = value;
             controller = new TCAController(TCAProjectVO(project));
-            updateBitmapToView();
         }
 
         private function onAddedToStage(event:Event):void {
@@ -67,26 +49,6 @@
             NativeDragManager.acceptDragDrop(this);
         }
 
-        private function updateBitmapToView(...bindings):Object {
-            if (!project || !list || !list.selectedItem || !list.dataProvider || !(list.selectedItem is TextureVO) || list.dataProvider != TCAProjectVO(project).imageCollection) {
-                bitmapToView = null;
-                starlingPreviewImage = null;
-                return null;
-            }
-            bitmapToView = TextureVO(list.selectedItem).sourceBitmap;
-            var texture:Texture = Texture.fromAtfData(TextureVO(list.selectedItem).atfData);
-            starlingPreviewImage = new starling.display.Image(texture);
-
-            var tabs:Array = [bitmapTabItem, atfTabItem];
-            if (list.selectedItem is TextureFontVO) {
-                tabs.push(fontTabItem);
-                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", TextureVO(list.selectedItem).name, 32, 0xffffff);
-            }
-            viewModeTabBar.dataProvider = new ArrayCollection(tabs);
-
-            return null;
-        }
-
         private function onExportTcaClick(event:MouseEvent):void {
             controller.exportTCA();
         }
@@ -112,20 +74,13 @@
             progressBar.setProgress(TCAProjectVO(project).loadedPercent, 100);
             return null;
         }
-
         ]]>
     </fx:Script>
 
     <fx:Declarations>
         <fx:Object>
-            {updateBitmapToView(visible, project, list, list.selectedItem, list.dataProvider, TCAProjectVO(project).imageCollection, TextureVO(list.selectedItem).sourceBitmap)}
-        </fx:Object>
-        <fx:Object>
             {updateProgress(project, TCAProjectVO(project).isFullyLoaded, TCAProjectVO(project).loadedPercent)}
         </fx:Object>
-        <fx:Object name="Source" id="bitmapTabItem"/>
-        <fx:Object name="ATF" id="atfTabItem"/>
-        <fx:Object name="Font" id="fontTabItem"/>
     </fx:Declarations>
 
     <s:VGroup width="100%" height="100%"
@@ -144,29 +99,15 @@
                     <s:Button label="EXPORT TCA" click="onExportTcaClick(event)"/>
                 </s:HGroup>
             </s:VGroup>
-            <s:VGroup width="100%" height="100%" gap="-1">
-                <s:TabBar id="viewModeTabBar"
-                          width="100%" labelField="name"/>
-                <s:Group width="100%" height="100%">
-                    <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"
-                             visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
-                    <s:Image source="{bitmapToView}" width="100%" height="100%"
-                             visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
-                    <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
-                                                       starlingComponent="{starlingPreviewImage}"
-                                                       visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == atfTabItem}"/>
-                    <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
-                                                       starlingComponent="{fontShowTextField}"
-                                                       visible="{bitmapToView &amp;&amp; viewModeTabBar.selectedItem == fontTabItem}"/>
-                    <s:Rect width="100%" height="100%">
-                        <s:stroke>
-                            <s:SolidColorStroke color="{getStyle('borderColor')}"/>
-                        </s:stroke>
-                    </s:Rect>
-                </s:Group>
-                <s:HGroup width="100%" verticalAlign="middle" visible="{bitmapToView}" includeInLayout="{bitmapToView}">
+
+            <s:VGroup width="100%" height="100%"
+                      gap="-1">
+                <editor:TextureViewer width="100%" height="100%"
+                                      texture="{list.selectedItem}"/>
+                <s:HGroup width="100%" verticalAlign="middle" visible="{list.selectedItem}"
+                          includeInLayout="{list.selectedItem}">
                     <s:Label
-                            text="Original dimensions: {bitmapToView.width}X{bitmapToView.height}, ATF dimensions: {TextureVO(list.selectedItem).atfWidth}X{TextureVO(list.selectedItem).atfHeight}"/>
+                            text="Original dimensions: {list.selectedItem.originalWidth}X{list.selectedItem.originalHeight}, ATF dimensions: {list.selectedItem.atfWidth}X{list.selectedItem.atfHeight}"/>
                     <s:Spacer width="100%"/>
                     <s:Button label="Create font" click="onCreateFontClick(event)"
                               visible="{!(list.selectedItem is TextureFontVO)}"
@@ -177,6 +118,7 @@
                     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
                 </s:HGroup>
             </s:VGroup>
+
         </s:HGroup>
 
         <mx:ProgressBar width="100%" id="progressBar" minimum="0" maximum="0" mode="manual"

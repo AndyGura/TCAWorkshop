@@ -5,7 +5,7 @@
                        preinitialize="onPreinitialize(event)">
 
     <fx:Script><![CDATA[
-        import com.andrewgura.ui.components.TCAEditor;
+        import com.andrewgura.ui.components.editor.TCAEditor;
         import com.andrewgura.ui.components.TCASettingsPanel;
         import com.andrewgura.vo.FileTypeVO;
         import com.andrewgura.vo.TCAProjectVO;

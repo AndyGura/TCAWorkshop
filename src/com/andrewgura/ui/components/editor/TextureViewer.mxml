@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+          xmlns:s="library://ns.adobe.com/flex/spark" xmlns:starlingwrapper="com.andrewgura.stageComponentsWrapper.*"
+          width="100%" height="100%" gap="-1"
+          addedToStage="updateBitmapToView()">
+
+    <fx:Script><![CDATA[
+        import com.andrewgura.consts.AssetsConsts;
+        import com.andrewgura.vo.TextureFontVO;
+        import com.andrewgura.vo.TextureVO;
+
+        import mx.collections.ArrayCollection;
+
+        import starling.display.Image;
+        import starling.text.TextField;
+        import starling.textures.Texture;
+
+        [Bindable]
+        public var texture:TextureVO;
+
+        [Bindable]
+        private var starlingPreviewImage:starling.display.Image;
+
+        [Bindable]
+        public var fontShowTextField:starling.text.TextField;
+
+        private function updateBitmapToView(...bindings):Object {
+            if (!texture) {
+                starlingPreviewImage = null;
+                return null;
+            }
+            var atfTexture:Texture = Texture.fromAtfData(texture.atfData);
+            starlingPreviewImage = new starling.display.Image(atfTexture);
+
+            var tabs:Array = [bitmapTabItem, atfTabItem];
+            if (texture is TextureFontVO) {
+                tabs.push(fontTabItem);
+                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", texture.name, 32, 0xffffff);
+            }
+            viewModeTabBar.dataProvider = new ArrayCollection(tabs);
+            return null;
+        }
+        ]]>
+    </fx:Script>
+
+    <fx:Declarations>
+        <fx:Object>
+            {updateBitmapToView(visible, texture, texture.sourceBitmap)}
+        </fx:Object>
+        <fx:Object name="Source" id="bitmapTabItem"/>
+        <fx:Object name="ATF" id="atfTabItem"/>
+        <fx:Object name="Font" id="fontTabItem"/>
+    </fx:Declarations>
+
+    <s:TabBar id="viewModeTabBar"
+              width="100%" labelField="name"/>
+    <s:Group width="100%" height="100%">
+        <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"
+                 visible="{texture &amp;&amp; texture.sourceBitmap &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
+        <s:Image source="{texture.sourceBitmap}" width="100%" height="100%"
+                 visible="{texture &amp;&amp; texture.sourceBitmap &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
+        <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
+                                           starlingComponent="{starlingPreviewImage}"
+                                           visible="{texture &amp;&amp; viewModeTabBar.selectedItem == atfTabItem}"/>
+        <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
+                                           starlingComponent="{fontShowTextField}"
+                                           visible="{texture &amp;&amp; viewModeTabBar.selectedItem == fontTabItem}"/>
+        <s:Rect width="100%" height="100%">
+            <s:stroke>
+                <s:SolidColorStroke color="{getStyle('borderColor')}"/>
+            </s:stroke>
+        </s:Rect>
+    </s:Group>
+
+</s:VGroup>
