@@ -11,10 +11,12 @@
         import com.andrewgura.events.DataObjectEvent;
         import com.andrewgura.vo.ProjectVO;
         import com.andrewgura.vo.TCAProjectVO;
-        import com.andrewgura.vo.TextureFontVO;
         import com.andrewgura.vo.TextureVO;
 
+        [Bindable]
         private var controller:TCAController;
+        [Bindable]
+        public var selectedTexture:TextureVO;
 
         override public function set project(value:ProjectVO):void {
             if (super.project == value) return;
@@ -28,18 +30,6 @@
             addEventListener("renameTexture", onRenameTexture);
         }
 
-        protected function addItemClickHandler(event:MouseEvent):void {
-            MainController.importFiles();
-        }
-
-        protected function deleteItemClickHandler(event:MouseEvent):void {
-            var items:Array = [];
-            for each (var e:Object in list.selectedItems) {
-                items.push(e);
-            }
-            controller.deleteItems(items);
-        }
-
         protected function dragDropHandler(event:NativeDragEvent):void {
             var dropFiles:Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
             MainController.importSelectedFiles(dropFiles);
@@ -47,22 +37,6 @@
 
         protected function dragEnterHandler(event:NativeDragEvent):void {
             NativeDragManager.acceptDragDrop(this);
-        }
-
-        private function onExportTcaClick(event:MouseEvent):void {
-            controller.exportTCA();
-        }
-
-        private function onExportPngClick(event:MouseEvent):void {
-            controller.exportPicture(TextureVO(list.selectedItem).name);
-        }
-
-        private function onCreateFontClick(event:MouseEvent):void {
-            controller.createFont(TextureVO(list.selectedItem));
-        }
-
-        private function onImportFontXmlClick(event:MouseEvent):void {
-            controller.importFontXml(TextureFontVO(list.selectedItem));
         }
 
         private function onRenameTexture(event:DataObjectEvent):void {
@@ -84,41 +58,18 @@
     </fx:Declarations>
 
     <s:VGroup width="100%" height="100%"
-              visible="{project}">
-
+              visible="{project}" includeInLayout="{project}">
         <s:HGroup width="100%" height="100%">
-            <s:VGroup height="100%">
-                <s:List id="list" dataProvider="{TCAProjectVO(project).imageCollection}"
-                        allowMultipleSelection="true"
-                        itemRenderer="com.andrewgura.ui.itemRenderers.TextureListItemRenderer"
-                        width="400" height="100%"/>
-                <s:HGroup width="100%" paddingTop="5" paddingBottom="5" paddingLeft="5" paddingRight="5">
-                    <s:Button label="Add" click="addItemClickHandler(event)"/>
-                    <s:Button label="Delete" click="deleteItemClickHandler(event)"/>
-                    <s:Spacer width="100%"/>
-                    <s:Button label="EXPORT TCA" click="onExportTcaClick(event)"/>
-                </s:HGroup>
-            </s:VGroup>
-
+            <editor:TCAListControl id="tcaControl" width="400" height="100%"
+                                   project="{project}" selectedTexture="@{selectedTexture}"
+                                   tcaController="{controller}"/>
             <s:VGroup width="100%" height="100%"
                       gap="-1">
                 <editor:TextureViewer width="100%" height="100%"
-                                      texture="{list.selectedItem}"/>
-                <s:HGroup width="100%" verticalAlign="middle" visible="{list.selectedItem}"
-                          includeInLayout="{list.selectedItem}">
-                    <s:Label
-                            text="Original dimensions: {list.selectedItem.originalWidth}X{list.selectedItem.originalHeight}, ATF dimensions: {list.selectedItem.atfWidth}X{list.selectedItem.atfHeight}"/>
-                    <s:Spacer width="100%"/>
-                    <s:Button label="Create font" click="onCreateFontClick(event)"
-                              visible="{!(list.selectedItem is TextureFontVO)}"
-                              includeInLayout="{!(list.selectedItem is TextureFontVO)}"/>
-                    <s:Button label="Import font xml" click="onImportFontXmlClick(event)"
-                              visible="{list.selectedItem is TextureFontVO}"
-                              includeInLayout="{list.selectedItem is TextureFontVO}"/>
-                    <s:Button label="Export PNG" click="onExportPngClick(event)"/>
-                </s:HGroup>
+                                      texture="{selectedTexture}"/>
+                <editor:TCAImageControl width="100%" texture="{selectedTexture}"
+                                        tcaController="{controller}"/>
             </s:VGroup>
-
         </s:HGroup>
 
         <mx:ProgressBar width="100%" id="progressBar" minimum="0" maximum="0" mode="manual"

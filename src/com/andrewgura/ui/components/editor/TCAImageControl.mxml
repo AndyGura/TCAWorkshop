@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+          xmlns:s="library://ns.adobe.com/flex/spark"
+          width="100%" verticalAlign="middle"
+          visible="{texture}" includeInLayout="{texture}">
+
+    <fx:Script><![CDATA[
+        import com.andrewgura.controllers.TCAController;
+        import com.andrewgura.vo.TextureFontVO;
+        import com.andrewgura.vo.TextureVO;
+
+        [Bindable]
+        public var texture:TextureVO;
+        [Bindable]
+        public var tcaController:TCAController;
+
+        private function onExportPngClick(event:MouseEvent):void {
+            tcaController.exportPicture(texture.name);
+        }
+
+        private function onCreateFontClick(event:MouseEvent):void {
+            tcaController.createFont(texture);
+        }
+
+        private function onImportFontXmlClick(event:MouseEvent):void {
+            tcaController.importFontXml(TextureFontVO(texture));
+        }
+        ]]>
+    </fx:Script>
+
+    <s:Label
+            text="Original dimensions: {texture.originalWidth}X{texture.originalHeight}, ATF dimensions: {texture.atfWidth}X{texture.atfHeight}"/>
+    <s:Spacer width="100%"/>
+    <s:Button label="Create font" click="onCreateFontClick(event)"
+              visible="{!(texture is TextureFontVO)}"
+              includeInLayout="{!(texture is TextureFontVO)}"/>
+    <s:Button label="Import font xml" click="onImportFontXmlClick(event)"
+              visible="{texture is TextureFontVO}"
+              includeInLayout="{texture is TextureFontVO}"/>
+    <s:Button label="Export PNG" click="onExportPngClick(event)"/>
+
+</s:HGroup>
