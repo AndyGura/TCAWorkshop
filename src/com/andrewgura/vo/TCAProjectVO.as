@@ -8,18 +8,19 @@ import flash.utils.getDefinitionByName;
 import flash.utils.getQualifiedClassName;
 
 import mx.collections.ArrayCollection;
+import mx.events.CollectionEvent;
 
 import spark.collections.Sort;
 import spark.collections.SortField;
 
 import starling.text.BitmapFont;
-
 import starling.text.TextField;
 import starling.textures.Texture;
 
 [Bindable]
 public class TCAProjectVO extends ProjectVO {
 
+    public static const TEXTURES_COLLECTION_CHANGE:String = "TEXTURES_COLLECTION_CHANGE";
     public static const LOADING_COMPLETE:String = 'LOADING_COMPLETE';
 
     public var outputTcaPath:String = '';
@@ -50,6 +51,11 @@ public class TCAProjectVO extends ProjectVO {
         sort.fields = [new SortField("name")];
         imageCollection.sort = sort;
         imageCollection.refresh();
+        imageCollection.addEventListener(CollectionEvent.COLLECTION_CHANGE, onTextureCollectionChange);
+    }
+
+    private function onTextureCollectionChange(event:CollectionEvent):void {
+        dispatchEvent(new CollectionEvent(TEXTURES_COLLECTION_CHANGE, false, false, event.kind, event.location, event.oldLocation, event.items));
     }
 
     override public function serialize():ByteArray {
@@ -78,7 +84,7 @@ public class TCAProjectVO extends ProjectVO {
         }
         for each (var fontTexture:TextureVO in imageCollection) {
             if (fontTexture is TextureFontVO) {
-                starling.text.TextField.registerBitmapFont(new BitmapFont(Texture.fromAtfData(fontTexture.atfData), TextureFontVO(fontTexture).fontXML), fontTexture.name);
+                TextField.registerBitmapFont(new BitmapFont(Texture.fromAtfData(fontTexture.atfData), TextureFontVO(fontTexture).fontXML), fontTexture.name);
             }
         }
         isChangesSaved = true;

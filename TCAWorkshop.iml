@@ -17,6 +17,9 @@
             <entry module-name="StarlingAway3DinFlex" build-configuration-name="StarlingAway3DinFlex">
               <dependency linkage="Merged" />
             </entry>
+            <entry library-id="0f385a06-dcc6-403a-80d6-158179e36072">
+              <dependency linkage="Merged" />
+            </entry>
           </entries>
           <sdk name="4.14.1.air-20.0" />
         </dependencies>
@@ -47,5 +50,15 @@
     <orderEntry type="module" module-name="WorkshopAPI" exported="" />
     <orderEntry type="module" module-name="NFSNativeResourceLoader" exported="" />
     <orderEntry type="module" module-name="StarlingAway3DinFlex" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="0f385a06-dcc6-403a-80d6-158179e36072" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../StarlingAway3DinFlex/libs/starling.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
