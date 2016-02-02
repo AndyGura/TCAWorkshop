@@ -6,6 +6,7 @@
 
     <fx:Script><![CDATA[
         import com.andrewgura.consts.AssetsConsts;
+        import com.andrewgura.utils.getObjectMemoryHash;
         import com.andrewgura.vo.TextureFontVO;
         import com.andrewgura.vo.TextureVO;
 
@@ -35,7 +36,7 @@
             var tabs:Array = [bitmapTabItem, atfTabItem];
             if (texture is TextureFontVO) {
                 tabs.push(fontTabItem);
-                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", texture.name, 32, 0xffffff);
+                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", getObjectMemoryHash(texture)+texture.name, 32, 0xffffff);
             }
             viewModeTabBar.dataProvider = new ArrayCollection(tabs);
             return null;
@@ -45,7 +46,7 @@
 
     <fx:Declarations>
         <fx:Object>
-            {updateBitmapToView(visible, texture, texture.sourceBitmap)}
+            {updateBitmapToView(visible, texture, texture.sourceBitmap, texture.atfData, texture.name, (texture is TextureFontVO) ? TextureFontVO(texture).fontXML : null)}
         </fx:Object>
         <fx:Object name="Source" id="bitmapTabItem"/>
         <fx:Object name="ATF" id="atfTabItem"/>

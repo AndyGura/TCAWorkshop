@@ -2,7 +2,7 @@
 <module type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="TCAWorkshop">
     <configurations>
-      <configuration name="TCAWorkshop" target-platform="Desktop" main-class="Main" output-file="TCAWorkshop.swf" output-folder="$MODULE_DIR$/out/production/TCAWorkshop">
+      <configuration name="TCAWorkshop" target-platform="Desktop" main-class="Main" output-file="TCAWorkshop.swf" output-folder="$MODULE_DIR$/bin">
         <dependencies target-player="11.9">
           <entries>
             <entry module-name="BreezeTheme" build-configuration-name="BreezeTheme">
@@ -18,6 +18,9 @@
               <dependency linkage="Merged" />
             </entry>
             <entry library-id="0f385a06-dcc6-403a-80d6-158179e36072">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="FlashCrazyUtils" build-configuration-name="FlashCrazyUtils">
               <dependency linkage="Merged" />
             </entry>
           </entries>
@@ -60,5 +63,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="FlashCrazyUtils" exported="" />
   </component>
 </module>

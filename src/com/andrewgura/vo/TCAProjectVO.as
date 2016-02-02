@@ -82,11 +82,6 @@ public class TCAProjectVO extends ProjectVO {
             texture.deserialize(data.readObject());
             imageCollection.addItem(texture);
         }
-        for each (var fontTexture:TextureVO in imageCollection) {
-            if (fontTexture is TextureFontVO) {
-                TextField.registerBitmapFont(new BitmapFont(Texture.fromAtfData(fontTexture.atfData), TextureFontVO(fontTexture).fontXML), fontTexture.name);
-            }
-        }
         isChangesSaved = true;
     }
 

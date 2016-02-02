@@ -15,11 +15,34 @@ public class TextureVO {
     public var atfWidth:Number;
     public var atfHeight:Number;
 
-    public var atfData:ByteArray;
-    public var name:String;
+    private var _atfData:ByteArray;
+    private var _name:String;
+
+
+    [Bindable(event="atfDataChanged")]
+    public function get atfData():ByteArray {
+        return _atfData;
+    }
+
+    public function set atfData(value:ByteArray):void {
+        if (_atfData == value) return;
+        _atfData = value;
+        dispatchEvent(new Event("atfDataChanged"));
+    }
+
+    [Bindable(event="nameChanged")]
+    public function get name():String {
+        return _name;
+    }
+
+    public function set name(value:String):void {
+        if (_name == value) return;
+        _name = value;
+        dispatchEvent(new Event("nameChanged"));
+    }
 
     public function TextureVO(name:String) {
-        this.name = name;
+        this._name = name;
     }
 
     [Bindable(event="sourceBitmapChanged")]
@@ -37,7 +60,7 @@ public class TextureVO {
 
     public function serialize():ByteArray {
         var output:ByteArray = new ByteArray();
-        output.writeObject({name: name, atfData: atfData, atfWidth: atfWidth, atfHeight: atfHeight});
+        output.writeObject({name: _name, atfData: _atfData, atfWidth: atfWidth, atfHeight: atfHeight});
         var rect:Rectangle = new Rectangle(0, 0, sourceBitmap.width, sourceBitmap.height);
         var bytes:ByteArray = sourceBitmap.bitmapData.getPixels(rect);
         output.writeObject({rect: rect, data: bytes});
@@ -57,8 +80,7 @@ public class TextureVO {
     }
 
     public function get tcaData():Object {
-        return {texType: 0, name: name, data: atfData};
+        return {texType: 0, name: _name, data: _atfData};
     }
-
 }
 }
