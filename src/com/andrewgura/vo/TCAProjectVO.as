@@ -25,23 +25,15 @@ public class TCAProjectVO extends ProjectVO {
 
     public var outputTcaPath:String = '';
     public var imageCollection:ArrayCollection = new ArrayCollection();
-    public static var tcaTextureTypeMap:Dictionary = prepareTextureTypeMap();
     public static var tcaTextureClassMap:Dictionary = prepareTextureClassMap();
 
     public var loadedPercent:Number = 100;
     public var isFullyLoaded:Boolean = true;
 
-    private static function prepareTextureTypeMap():Dictionary {
-        var dict:Dictionary = new Dictionary();
-        dict[TextureVO] = 0;
-        dict[TextureFontVO] = 1;
-        return dict;
-    }
-
     private static function prepareTextureClassMap():Dictionary {
         var dict:Dictionary = new Dictionary();
         dict[0] = TextureVO;
-        dict[1] = TextureFontVO;
+        dict[1] = FontTextureVO;
         return dict;
     }
 
@@ -64,7 +56,7 @@ public class TCAProjectVO extends ProjectVO {
             outputTcaPath: outputTcaPath
         });
         for each (var texture:TextureVO in imageCollection) {
-            output.writeByte(tcaTextureTypeMap[Class(getDefinitionByName(getQualifiedClassName(texture)))]);
+            output.writeByte(texture.textureType);
             output.writeObject(texture.serialize());
         }
         output.compress();

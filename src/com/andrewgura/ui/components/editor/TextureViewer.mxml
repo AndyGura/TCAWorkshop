@@ -6,8 +6,9 @@
 
     <fx:Script><![CDATA[
         import com.andrewgura.consts.AssetsConsts;
+        import com.andrewgura.consts.TcaTextureType;
         import com.andrewgura.utils.getObjectMemoryHash;
-        import com.andrewgura.vo.TextureFontVO;
+        import com.andrewgura.vo.FontTextureVO;
         import com.andrewgura.vo.TextureVO;
 
         import mx.collections.ArrayCollection;
@@ -23,6 +24,9 @@
         private var starlingPreviewImage:starling.display.Image;
 
         [Bindable]
+        private var scale9PreviewImage:starling.display.Image;
+
+        [Bindable]
         public var fontShowTextField:starling.text.TextField;
 
         private function updateBitmapToView(...bindings):Object {
@@ -34,9 +38,9 @@
             starlingPreviewImage = new starling.display.Image(atfTexture);
 
             var tabs:Array = [bitmapTabItem, atfTabItem];
-            if (texture is TextureFontVO) {
+            if (texture.textureType == TcaTextureType.BITMAP_FONT_TEXTURE) {
                 tabs.push(fontTabItem);
-                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", getObjectMemoryHash(texture)+texture.name, 32, 0xffffff);
+                fontShowTextField = new starling.text.TextField(500, 500, "The quick brown fox jumps over the lazy dog.", getObjectMemoryHash(texture) + texture.name, 32, 0xffffff);
             }
             viewModeTabBar.dataProvider = new ArrayCollection(tabs);
             return null;
@@ -46,11 +50,13 @@
 
     <fx:Declarations>
         <fx:Object>
-            {updateBitmapToView(visible, texture, texture.sourceBitmap, texture.atfData, texture.name, (texture is TextureFontVO) ? TextureFontVO(texture).fontXML : null)}
+            {updateBitmapToView(visible, texture, texture.sourceBitmap,
+            texture.atfData, texture.name, (texture is FontTextureVO) ? FontTextureVO(texture).fontXML : null)}
         </fx:Object>
         <fx:Object name="Source" id="bitmapTabItem"/>
         <fx:Object name="ATF" id="atfTabItem"/>
         <fx:Object name="Font" id="fontTabItem"/>
+        <fx:Object name="Scale9" id="scale9previewTabItem"/>
     </fx:Declarations>
 
     <s:TabBar id="viewModeTabBar"
@@ -66,6 +72,9 @@
         <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                            starlingComponent="{fontShowTextField}"
                                            visible="{texture &amp;&amp; viewModeTabBar.selectedItem == fontTabItem}"/>
+        <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
+                                           starlingComponent="{scale9PreviewImage}"
+                                           visible="{texture &amp;&amp; viewModeTabBar.selectedItem == scale9PreviewImage}"/>
         <s:Rect width="100%" height="100%">
             <s:stroke>
                 <s:SolidColorStroke color="{getStyle('borderColor')}"/>

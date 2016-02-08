@@ -5,8 +5,9 @@
           visible="{texture}" includeInLayout="{texture}">
 
     <fx:Script><![CDATA[
+        import com.andrewgura.consts.TcaTextureType;
         import com.andrewgura.controllers.TCAController;
-        import com.andrewgura.vo.TextureFontVO;
+        import com.andrewgura.vo.FontTextureVO;
         import com.andrewgura.vo.TextureVO;
 
         [Bindable]
@@ -23,7 +24,7 @@
         }
 
         private function onImportFontXmlClick(event:MouseEvent):void {
-            tcaController.importFontXml(TextureFontVO(texture));
+            tcaController.importFontXml(FontTextureVO(texture));
         }
         ]]>
     </fx:Script>
@@ -32,11 +33,11 @@
             text="Original dimensions: {texture.originalWidth}X{texture.originalHeight}, ATF dimensions: {texture.atfWidth}X{texture.atfHeight}"/>
     <s:Spacer width="100%"/>
     <s:Button label="Create font" click="onCreateFontClick(event)"
-              visible="{!(texture is TextureFontVO)}"
-              includeInLayout="{!(texture is TextureFontVO)}"/>
+              visible="{texture.textureType == TcaTextureType.DEFAULT_TEXTURE}"
+              includeInLayout="{texture.textureType == TcaTextureType.DEFAULT_TEXTURE}"/>
     <s:Button label="Import font xml" click="onImportFontXmlClick(event)"
-              visible="{texture is TextureFontVO}"
-              includeInLayout="{texture is TextureFontVO}"/>
+              visible="{texture.textureType == TcaTextureType.BITMAP_FONT_TEXTURE}"
+              includeInLayout="{texture.textureType == TcaTextureType.BITMAP_FONT_TEXTURE}"/>
     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
 
 </s:HGroup>

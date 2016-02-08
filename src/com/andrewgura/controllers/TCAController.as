@@ -8,8 +8,8 @@ import com.andrewgura.ui.popup.AppPopups;
 import com.andrewgura.ui.popup.PopupFactory;
 import com.andrewgura.utils.DictionaryUtils;
 import com.andrewgura.utils.TextureLoader;
+import com.andrewgura.vo.FontTextureVO;
 import com.andrewgura.vo.TCAProjectVO;
-import com.andrewgura.vo.TextureFontVO;
 import com.andrewgura.vo.TextureVO;
 
 import flash.display.Bitmap;
@@ -22,7 +22,6 @@ import flash.net.FileFilter;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
-import mx.collections.ArrayCollection;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 import mx.graphics.codec.PNGEncoder;
@@ -97,7 +96,7 @@ public class TCAController {
                 texCount++;
             }
         } else if (nfsData is NativeFfnFile) {
-            texture = new TextureFontVO(nfsData.name);
+            texture = new FontTextureVO(nfsData.name);
             addTexture(texture);
             textureWrap = new TextureLoader(texture);
             textureWrap.loadByBitmap(new Bitmap(nfsData));
@@ -153,7 +152,7 @@ public class TCAController {
     }
 
     public function createFont(texture:TextureVO):void {
-        var newTexture:TextureFontVO = new TextureFontVO(texture.name);
+        var newTexture:FontTextureVO = new FontTextureVO(texture.name);
         newTexture.sourceBitmap = texture.sourceBitmap;
         newTexture.atfData = texture.atfData;
         newTexture.originalWidth = texture.originalWidth;
@@ -163,7 +162,7 @@ public class TCAController {
         project.imageCollection.setItemAt(newTexture, project.imageCollection.getItemIndex(texture));
     }
 
-    public function importFontXml(font:TextureFontVO):void {
+    public function importFontXml(font:FontTextureVO):void {
         var f:File = new File();
         f.addEventListener(Event.SELECT, onFileSelected);
         f.addEventListener(Event.CANCEL, onFileSelectionCanceled);

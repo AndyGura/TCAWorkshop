@@ -1,5 +1,7 @@
 package com.andrewgura.vo {
 
+import com.andrewgura.consts.TcaTextureType;
+
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.events.Event;
@@ -14,6 +16,18 @@ public class TextureVO {
     public var originalHeight:Number;
     public var atfWidth:Number;
     public var atfHeight:Number;
+
+    private var _textureType:Number = TcaTextureType.DEFAULT_TEXTURE;
+
+    [Bindable(event="textureTypeChanged")]
+    public function get textureType():Number {
+        return _textureType;
+    }
+
+    public function set textureType(value:Number):void {
+        _textureType = value;
+        dispatchEvent(new Event("textureTypeChanged"));
+    }
 
     private var _atfData:ByteArray;
     private var _name:String;
@@ -80,7 +94,7 @@ public class TextureVO {
     }
 
     public function get tcaData():Object {
-        return {texType: 0, name: _name, data: _atfData};
+        return {texType: _textureType, name: _name, data: _atfData};
     }
 }
 }
