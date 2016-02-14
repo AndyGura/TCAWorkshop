@@ -52,7 +52,6 @@
     <orderEntry type="module" module-name="BreezeTheme" exported="" />
     <orderEntry type="module" module-name="WorkshopAPI" exported="" />
     <orderEntry type="module" module-name="NFSNativeResourceLoader" exported="" />
-    <orderEntry type="module" module-name="StarlingAway3DinFlex" exported="" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
         <properties id="0f385a06-dcc6-403a-80d6-158179e36072" />
@@ -63,6 +62,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="StarlingAway3DinFlex" exported="" />
     <orderEntry type="module" module-name="FlashCrazyUtils" exported="" />
   </component>
 </module>

@@ -42,6 +42,8 @@
         private function onRenameTexture(event:DataObjectEvent):void {
             var newName:String = controller.getNewNameForDuplicate(event.data.newName, TCAProjectVO(project).imageCollection.getItemIndex(event.data.texture));
             event.data.texture.name = newName;
+            //sort
+            TCAProjectVO(project).imageCollection.refresh();
         }
 
         private function updateProgress(...bindings):Object {
