@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
           xmlns:s="library://ns.adobe.com/flex/spark" xmlns:starlingwrapper="com.andrewgura.stageComponentsWrapper.*"
+          xmlns:editor="com.andrewgura.ui.components.editor.*"
           width="100%" height="100%" gap="-1"
           addedToStage="updateBitmapToView()">
 
@@ -21,6 +22,9 @@
         public var texture:TextureVO;
 
         [Bindable]
+        private var starlingChecker:starling.display.Image;
+
+        [Bindable]
         private var starlingPreviewImage:starling.display.Image;
 
         [Bindable]
@@ -34,6 +38,12 @@
                 starlingPreviewImage = null;
                 return null;
             }
+
+            if (!starlingChecker) {
+                var checkerTexture:Texture = Texture.fromEmbeddedAsset(AssetsConsts.Transparency);
+                starlingChecker = new starling.display.Image(checkerTexture);
+            }
+
             var atfTexture:Texture = Texture.fromAtfData(texture.atfData);
             starlingPreviewImage = new starling.display.Image(atfTexture);
 
@@ -67,8 +77,14 @@
         <s:Image source="{texture.sourceBitmap}" width="100%" height="100%"
                  visible="{texture &amp;&amp; texture.sourceBitmap &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
         <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
-                                           starlingComponent="{starlingPreviewImage}"
+                                           starlingComponent="{starlingChecker}"
                                            visible="{texture &amp;&amp; viewModeTabBar.selectedItem == atfTabItem}"/>
+        <editor:LetterBoxGroup top="1" bottom="1" left="1" right="1"
+                               aspectRatio="{texture.atfWidth/texture.atfHeight}"
+                               visible="{texture &amp;&amp; viewModeTabBar.selectedItem == atfTabItem}">
+            <starlingwrapper:StarlingComponent width="100%" height="100%"
+                                               starlingComponent="{starlingPreviewImage}"/>
+        </editor:LetterBoxGroup>
         <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                            starlingComponent="{fontShowTextField}"
                                            visible="{texture &amp;&amp; viewModeTabBar.selectedItem == fontTabItem}"/>
