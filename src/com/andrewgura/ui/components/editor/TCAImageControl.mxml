@@ -29,9 +29,8 @@
         ]]>
     </fx:Script>
 
-    <s:Label
-            text="Original dimensions: {texture.originalWidth}X{texture.originalHeight}, ATF dimensions: {texture.atfWidth}X{texture.atfHeight}"/>
     <s:Spacer width="100%"/>
+
     <s:Button label="Create font" click="onCreateFontClick(event)"
               visible="{texture.textureType == TcaTextureType.DEFAULT_TEXTURE}"
               includeInLayout="{texture.textureType == TcaTextureType.DEFAULT_TEXTURE}"/>

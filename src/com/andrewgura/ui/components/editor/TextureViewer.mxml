@@ -12,6 +12,8 @@
         import com.andrewgura.vo.FontTextureVO;
         import com.andrewgura.vo.TextureVO;
 
+        import feathers.display.TiledImage;
+
         import mx.collections.ArrayCollection;
 
         import starling.display.Image;
@@ -22,7 +24,7 @@
         public var texture:TextureVO;
 
         [Bindable]
-        private var starlingChecker:starling.display.Image;
+        private var starlingChecker:TiledImage;
 
         [Bindable]
         private var starlingPreviewImage:starling.display.Image;
@@ -41,7 +43,7 @@
 
             if (!starlingChecker) {
                 var checkerTexture:Texture = Texture.fromEmbeddedAsset(AssetsConsts.Transparency);
-                starlingChecker = new starling.display.Image(checkerTexture);
+                starlingChecker = new TiledImage(checkerTexture);
             }
 
             var atfTexture:Texture = Texture.fromAtfData(texture.atfData);
@@ -72,9 +74,11 @@
     <s:TabBar id="viewModeTabBar"
               width="100%" labelField="name"/>
     <s:Group width="100%" height="100%">
-        <s:Image source="{AssetsConsts.Transparency}" width="100%" height="100%" fillMode="repeat"
+        <s:Image source="{AssetsConsts.Transparency}"
+                 top="1" bottom="1" left="1" right="1" fillMode="repeat"
                  visible="{texture &amp;&amp; texture.sourceBitmap &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
-        <s:Image source="{texture.sourceBitmap}" width="100%" height="100%"
+        <s:Image source="{texture.sourceBitmap}"
+                 top="1" bottom="1" left="1" right="1"
                  visible="{texture &amp;&amp; texture.sourceBitmap &amp;&amp; viewModeTabBar.selectedItem == bitmapTabItem}"/>
         <starlingwrapper:StarlingComponent top="1" bottom="1" left="1" right="1"
                                            starlingComponent="{starlingChecker}"

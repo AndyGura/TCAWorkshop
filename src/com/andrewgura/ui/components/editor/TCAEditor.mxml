@@ -65,8 +65,7 @@
             <editor:TCAListControl id="tcaControl" width="400" height="100%"
                                    project="{project}" selectedTexture="@{selectedTexture}"
                                    tcaController="{controller}"/>
-            <s:VGroup width="100%" height="100%"
-                      gap="-1">
+            <s:VGroup width="100%" height="100%">
                 <editor:TextureViewer width="100%" height="100%"
                                       texture="{selectedTexture}"/>
                 <editor:TCAImageControl width="100%" texture="{selectedTexture}"
