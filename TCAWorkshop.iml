@@ -38,7 +38,7 @@
           <files-to-package>
             <FilePathAndPathInPackage file-path="$MODULE_DIR$/src/assets" path-in-package="assets" />
           </files-to-package>
-          <AirSigningOptions keystore-path="$MODULE_DIR$/cer/self-sign.p12" use-temp-certificate="false" />
+          <AirSigningOptions keystore-path="$MODULE_DIR$/cer/self-sign.p12" />
         </packaging-air-desktop>
         <packaging-android />
         <packaging-ios />
