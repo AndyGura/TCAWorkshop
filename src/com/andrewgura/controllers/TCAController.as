@@ -220,7 +220,18 @@ public class TCAController {
         }
     }
 
+    public function addTextures(textures:Array):void {
+        if (textures && textures.length > 0) {
+            for each (var texture:TextureVO in textures) {
+                addTexture(texture);
+            }
+        }
+    }
+
     public function addTexture(texture:TextureVO):void {
+        if (project.imageCollection.getItemIndex(texture) > -1) {
+            return;
+        }
         var newName:String = getNewNameForDuplicate(texture.name);
         texture.name = newName;
         project.imageCollection.addItem(texture);

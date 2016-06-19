@@ -11,6 +11,9 @@
         import com.andrewgura.vo.TCAProjectVO;
         import com.andrewgura.vo.TextureVO;
 
+        import mx.core.DragSource;
+        import mx.events.DragEvent;
+
         [Bindable]
         public var project:TCAProjectVO;
         [Bindable]
@@ -36,11 +39,21 @@
         private function onExportTcaClick(event:MouseEvent):void {
             tcaController.exportTCA();
         }
+
+        private function onDragStart(event:DragEvent):void {
+            var items:Array = [];
+            event.dragSource = new DragSource();
+            for each (var texture:TextureVO in list.selectedItems) {
+                items.push(texture);
+            }
+            event.dragSource.addData(items, "textureListItems");
+        }
         ]]>
     </fx:Script>
 
     <s:List id="list" width="400" height="100%" allowMultipleSelection="true"
             dataProvider="{project.imageCollection}" selectedItem="@{selectedTexture}"
+            dragEnabled="true" dragMoveEnabled="true" dragStart="onDragStart(event)"
             itemRenderer="com.andrewgura.ui.itemRenderers.TextureListItemRenderer"/>
 
     <s:HGroup width="100%" paddingTop="5" paddingBottom="5" paddingLeft="5" paddingRight="5">

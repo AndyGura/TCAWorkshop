@@ -4,18 +4,13 @@ import com.andrewgura.controllers.TCAController;
 
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
-import flash.utils.getDefinitionByName;
-import flash.utils.getQualifiedClassName;
 
 import mx.collections.ArrayCollection;
 import mx.events.CollectionEvent;
+import mx.events.DragEvent;
 
 import spark.collections.Sort;
 import spark.collections.SortField;
-
-import starling.text.BitmapFont;
-import starling.text.TextField;
-import starling.textures.Texture;
 
 [Bindable]
 public class TCAProjectVO extends ProjectVO {
@@ -81,6 +76,11 @@ public class TCAProjectVO extends ProjectVO {
         isFullyLoaded = false;
         loadedPercent = 0;
         (new TCAController(this)).importFiles(files);
+    }
+
+    override public function processDragDrop(event:DragEvent):void {
+        var dropTextures:* = event.dragSource.dataForFormat("textureListItems");
+        (new TCAController(this)).addTextures(dropTextures);
     }
 
     public function getExportedTCA():ByteArray {
