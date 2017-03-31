@@ -19,6 +19,10 @@
             tcaController.exportPicture(texture.name);
         }
 
+        private function onExportAtfClick(event:MouseEvent):void {
+            tcaController.exportAtf(texture.name);
+        }
+
         private function onCreateFontClick(event:MouseEvent):void {
             tcaController.createFont(texture);
         }
@@ -38,5 +42,6 @@
               visible="{texture.textureType == TcaTextureType.BITMAP_FONT_TEXTURE}"
               includeInLayout="{texture.textureType == TcaTextureType.BITMAP_FONT_TEXTURE}"/>
     <s:Button label="Export PNG" click="onExportPngClick(event)"/>
+    <s:Button label="Export ATF" click="onExportAtfClick(event)"/>
 
 </s:HGroup>

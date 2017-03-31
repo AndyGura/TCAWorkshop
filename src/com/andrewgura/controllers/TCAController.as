@@ -151,6 +151,21 @@ public class TCAController {
         f.save(pngData, name + '.png');
     }
 
+    public function exportAtf(name:String):void {
+        var texture:TextureVO = getTextureByName(name);
+        if (!texture) {
+            return;
+        }
+        var f:File;
+        if (project.outputTcaPath) {
+            f = File.applicationDirectory.resolvePath(project.fileName);
+            f = f.parent.resolvePath(project.outputTcaPath);
+        } else {
+            f = new File();
+        }
+        f.save(texture.atfData, name + '.atf');
+    }
+
     public function createFont(texture:TextureVO):void {
         var newTexture:FontTextureVO = new FontTextureVO(texture.name);
         newTexture.sourceBitmap = texture.sourceBitmap;
